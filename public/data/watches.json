@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Montre",
+    "id": "idWatchReceived",
+    "children": [
+      {
+        "name": "Boîte",
+        "children": [
+          {
+            "name": "Boîte 1",
+            "children": [
+              {
+                "name": "E1",
+                "value": 687
+              },
+              {
+                "name": "E2",
+                "value": 148
+              }
+            ]
+          },
+          {
+            "name": "B1",
+            "value": 135
+          },
+          {
+            "name": "B2",
+            "value": 98
+          },
+          {
+            "name": "B3",
+            "value": 56
+          }
+        ]
+      },
+      {
+        "name": "Cadran",
+        "children": [
+          {
+            "name": "Oyster",
+            "children": [
+              {
+                "name": "Steel",
+                "value": 800
+              },
+              {
+                "name": "Oyster or",
+                "children": [
+                  {
+                    "name": "Gris",
+                    "value": 800
+                  },
+                  {
+                    "name": "Rose",
+                    "value": 800
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Everose",
+            "value": 800
+          }
+        ]
+      },
+      {
+        "name": "Bracelet",
+        "children": [
+          {
+            "name": "Cuir",
+            "value": 335
+          },
+          {
+            "name": "Métal",
+            "value": 148
+          }
+        ]
+      }
+    ]
+  }
+]
