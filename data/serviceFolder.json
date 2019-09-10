@@ -1,8 +1,7 @@
-[
-  {
-    "name": "Service Folder",
-    "id": "1123",
-    "value": 5000,
-    "children": []
-  }
-]
+{
+  "id": "1123",
+  "entity": "serviceFolder",
+  "name": "Service Folder",
+  "children": [],
+  "value": 5000
+}

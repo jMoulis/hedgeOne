@@ -4,7 +4,8 @@
     "index": 0,
     "guid": "798723c1-d15e-45ec-a0f1-e5d2d4238132",
     "name": "Lowery Reid",
-    "friends": [
+    "value": 2000,
+    "children": [
       {
         "id": 0,
         "name": "Mcclain Little"
@@ -24,7 +25,8 @@
     "index": 1,
     "guid": "96ae2615-e660-498e-aa18-336bd43b6608",
     "name": "Ella Kerr",
-    "friends": [
+    "value": 2000,
+    "children": [
       {
         "id": 0,
         "name": "Vazquez Stanley"
@@ -44,7 +46,8 @@
     "index": 2,
     "guid": "965991c1-a117-4af8-9568-550fcd3b9098",
     "name": "Mclean Brooks",
-    "friends": [
+    "value": 2000,
+    "children": [
       {
         "id": 0,
         "name": "Socorro Gallegos"
@@ -64,7 +67,8 @@
     "index": 3,
     "guid": "51cdf976-02f8-46f8-8f9a-ed46a5d7864a",
     "name": "Joann Daniels",
-    "friends": [
+    "value": 2000,
+    "children": [
       {
         "id": 0,
         "name": "Tanner Mcpherson"
@@ -84,7 +88,8 @@
     "index": 4,
     "guid": "4b7d516b-a6e6-40ed-8561-464507a7f8e7",
     "name": "Cherie Ashley",
-    "friends": [
+    "value": 2000,
+    "children": [
       {
         "id": 0,
         "name": "Owen Stevenson"
@@ -104,7 +109,8 @@
     "index": 5,
     "guid": "0fb4b8e5-eb34-4711-a7a3-2cab7883dad0",
     "name": "Caitlin Conway",
-    "friends": [
+    "value": 2000,
+    "children": [
       {
         "id": 0,
         "name": "Glass Olson"
@@ -124,7 +130,8 @@
     "index": 6,
     "guid": "ec273e9f-d909-4950-977a-bf8b3f1a0e84",
     "name": "Colette Snow",
-    "friends": [
+    "value": 2000,
+    "children": [
       {
         "id": 0,
         "name": "Huber Lancaster"
