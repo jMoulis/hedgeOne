@@ -85,12 +85,7 @@ const Modal: FunctionComponent<Props> = ({
                       name: item[displayedKey],
                       value: 3000,
                       link: [linkId],
-                      children: [
-                        {
-                          name: 'Simon',
-                          value: 2500,
-                        },
-                      ],
+                      ...item,
                     });
                     close();
                   }}

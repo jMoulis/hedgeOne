@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
-import { ForceDirectedSeriesDataItem } from '@amcharts/amcharts4/plugins/forceDirected';
 
-const Root = styled.li`
+interface RootProps {
+  isSelected: boolean;
+}
+const Root = styled.li<RootProps>`
   padding: 2rem;
   margin: 1rem;
   min-width: 20rem;
   text-align: center;
   text-transform: capitalize;
   transition: all 150ms;
+  background-color: ${({ isSelected }) => (isSelected ? 'lightBlue' : '#fff')};
   box-shadow: 0 0 5px 0px rgba(148, 148, 148, 0.5);
   cursor: pointer;
   display: flex;
@@ -23,14 +26,20 @@ const Root = styled.li`
   }
 `;
 
-interface CustomForDirectSeriesDataItem extends ForceDirectedSeriesDataItem {
-  dataContext: any;
+interface Datas {
+  name: string;
+  value: number;
+  link: number;
+  entity: string;
+  children: Datas[];
+  navigation: any;
 }
 
 interface Props {
-  items?: CustomForDirectSeriesDataItem[] | unknown[];
-  groupName?: string;
+  itemsLength: number;
   handleClick: Function;
+  entityName: string;
+  selectedEntity?: string;
 }
 
 const Badge = styled.span`
@@ -41,12 +50,22 @@ const Badge = styled.span`
   color: white;
 `;
 
-const Tile: FunctionComponent<Props> = ({ items, groupName, handleClick }) => {
-  if (items)
+const Tile: FunctionComponent<Props> = ({
+  itemsLength,
+  handleClick,
+  entityName,
+  selectedEntity,
+}) => {
+  if (itemsLength)
     return (
-      <Root onClick={() => handleClick(items, groupName)}>
-        <h3>{groupName}</h3>
-        <Badge>{items.length}</Badge>
+      <Root
+        isSelected={selectedEntity === entityName}
+        onClick={() => {
+          handleClick(entityName);
+        }}
+      >
+        <h3>{entityName}</h3>
+        <Badge>{itemsLength}</Badge>
       </Root>
     );
   return null;

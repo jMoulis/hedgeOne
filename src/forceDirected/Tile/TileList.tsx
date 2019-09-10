@@ -1,7 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { ForceDirectedSeriesDataItem } from '@amcharts/amcharts4/plugins/forceDirected';
 import TileItem from './TileItem';
 
 const Root = styled.ul`
@@ -11,21 +10,29 @@ const Root = styled.ul`
   padding: 0;
   flex-wrap: wrap;
 `;
-
-interface Props {
-  lists?: ForceDirectedSeriesDataItem[];
-  handleClick: Function;
+interface Datas {
+  name: string;
+  value: number;
+  link: number;
+  entity: string;
+  children: Datas[];
 }
-const TileList: FunctionComponent<Props> = ({ lists, handleClick }) => {
+interface Props {
+  lists: Datas[];
+  handleClick: Function;
+  selectedEntity?: string;
+}
+const TileList: FunctionComponent<Props> = ({
+  lists,
+  handleClick,
+  selectedEntity,
+}) => {
   const [groupedLists, setGroupList] = useState<object>({});
 
   useEffect(() => {
-    const groupListItem = (
-      entity: string,
-      arrayItem: ForceDirectedSeriesDataItem[]
-    ) =>
+    const groupListItem = (entity: string, arrayItem: Datas[]) =>
       arrayItem.reduce((acc, item) => {
-        const key = item.dataContext[entity];
+        const key = item[entity];
         if (!acc[key]) {
           acc[key] = [];
         }
@@ -46,9 +53,10 @@ const TileList: FunctionComponent<Props> = ({ lists, handleClick }) => {
         return (
           <TileItem
             key={index}
-            items={groupedLists[key]}
-            groupName={key}
+            itemsLength={groupedLists[key].length}
+            entityName={key}
             handleClick={handleClick}
+            selectedEntity={selectedEntity}
           />
         );
       })}

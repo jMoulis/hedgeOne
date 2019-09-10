@@ -1,24 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
-import { ForceDirectedSeriesDataItem } from '@amcharts/amcharts4/plugins/forceDirected';
 import { Button } from './Templates';
 
 // TODO: Change Any
-interface CustomForDirectSeriesDataItem extends ForceDirectedSeriesDataItem {
-  dataContext: {
-    children: any;
-    entity: string;
-    link: number[];
-    name: string;
-    value: number;
-  };
-}
-
 interface Props {
-  item: {
-    entityItems: CustomForDirectSeriesDataItem[];
-    selectedGroupName: string;
-  };
+  list: any;
   handleSelect: Function;
   closePanel: any;
 }
@@ -54,9 +40,12 @@ const Header = styled.header`
   padding: 1rem;
 `;
 const Content = styled.div``;
+const Buttons = styled.div`
+  display: flex;
+`;
 
-const DetailContent: FunctionComponent<Props> = ({
-  item: { entityItems },
+const BottomPanel: FunctionComponent<Props> = ({
+  list,
   handleSelect,
   closePanel,
 }) => {
@@ -75,22 +64,42 @@ const DetailContent: FunctionComponent<Props> = ({
         />
       </Header>
       <Content>
-        <List>
-          {entityItems.map(entityItem => {
-            if (Object.keys(entityItem).length === 0) return null;
-            return (
-              <ListItem
-                key={entityItem.cloneId}
-                onClick={() => handleSelect(entityItem.node)}
-              >
-                {entityItem.name}
-              </ListItem>
-            );
-          })}
-        </List>
+        {list && (
+          <List>
+            {list.map(entityItem => {
+              if (Object.keys(entityItem).length === 0) return null;
+              return (
+                <ListItem
+                  key={entityItem._id}
+                  onClick={() => handleSelect(entityItem)}
+                >
+                  <div>{entityItem.name}</div>
+                  <Buttons>
+                    <Button
+                      type="button"
+                      bgColor="blue"
+                      color="white"
+                      width={2}
+                      height={2}
+                      radius={2}
+                    />
+                    <Button
+                      type="button"
+                      bgColor="red"
+                      color="white"
+                      width={2}
+                      height={2}
+                      radius={2}
+                    />
+                  </Buttons>
+                </ListItem>
+              );
+            })}
+          </List>
+        )}
       </Content>
     </Root>
   );
 };
 
-export default DetailContent;
+export default BottomPanel;

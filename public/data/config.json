@@ -1,0 +1,12 @@
+{
+  "menus": [
+    {
+      "label": "ServiceFolder",
+      "link": "/serviceFolder"
+    },
+    {
+      "label": "Entities",
+      "link": "/entities"
+    }
+  ]
+}

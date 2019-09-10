@@ -1,39 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import axios from 'axios';
-import {
-  ForceDirectedNode,
-  ForceDirectedSeriesDataItem,
-} from '@amcharts/amcharts4/plugins/forceDirected';
 import ForceDirectedChart from './ForceDirectedChart';
 import Action from './Action';
 import RightPanel from './RightPanel';
-import LeftPanel from './LeftPanel';
-import Header from './Header';
-import FakeRightPanelTemplate from './FakeRightPanelTemplate';
-import { SERVICE_FOLDER } from './config';
 import TileList from './Tile/TileList';
 import BottomPanel from './BottomPanel';
+import FormBuilder from './FormBuilder';
+import { ConfigState } from './forceDirected';
 
 const Root = styled.main`
   display: grid;
   position: relative;
   height: 100%;
+  grid-area: content;
   grid-template-areas:
-    'header header rightPanel'
-    'leftPanel content rightPanel'
-    'leftPanel bottomPanel rightPanel';
-  grid-template-columns: 20rem 1fr auto;
+    'header rightPanel'
+    'content rightPanel'
+    'bottomPanel rightPanel';
+  grid-template-columns: 1fr auto;
   grid-template-rows: 5rem auto 1fr;
 `;
 const Navigation = styled.article`
-  grid-area: navigation;
   flex: 1;
-`;
-
-const Content = styled.div`
-  grid-area: content;
 `;
 
 const Column = styled.div`
@@ -47,142 +37,158 @@ const Row = styled.section`
   margin-top: 2rem;
 `;
 
-function Force() {
-  interface SelectedEntityItemsProps {
-    entityItems: CustomForceDirectSeriesDataItem[];
-    selectedGroupName: string;
-  }
+const Header = styled.header`
+  grid-area: header;
+`;
 
+const Content = styled.div`
+  grid-area: content;
+`;
+
+function Force({ match }) {
   interface Datas {
     name: string;
     value: number;
     link: number;
     entity: string;
     children: Datas[];
+    id: string;
+    navigation: any;
   }
-
-  interface CustomForceDirectSeriesDataItem
-    extends ForceDirectedSeriesDataItem {
-    dataContext: any;
-  }
-  const [selectedNode, setSelectedNode] = useState<ForceDirectedNode | null>(
-    null
-  );
-  const [mainNode, setMainNode] = useState<ForceDirectedNode | null>(null);
+  const initConfigState = {
+    series: [],
+    context: {},
+  };
+  const prevSelectedNode = useRef<Datas | null>(null);
+  const [selectedNode, setSelectedNode] = useState<Datas | null>(null);
   const [showRightPanel, setShowRightPanel] = useState<boolean>(false);
   const [showBottomPanel, setShowBottomPanel] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
-  const [datas, setDatas] = useState<Datas[]>([]);
-  const [selectedEntityItems, setSelectedEntityItems] = useState<
-    SelectedEntityItemsProps
-  >({
-    entityItems: [],
-    selectedGroupName: '',
-  });
+  const [datas, setDatas] = useState<any>(null);
+  const [selectedEntity, setSelectedEntity] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [config, setConfig] = useState<ConfigState>(initConfigState);
 
-  const handleClick = (
-    entityItems: CustomForceDirectSeriesDataItem[],
-    selectedGroupName: string
-  ) => {
-    setSelectedEntityItems({ entityItems, selectedGroupName });
+  const handleClick = (entityName: string) => {
+    setSelectedEntity(entityName);
     setShowBottomPanel(true);
   };
 
-  const handleSelectedNode = (response: ForceDirectedNode) => {
+  const handleSelectedNode = (response: Datas) => {
+    prevSelectedNode.current = null;
     setSelectedNode(response);
     setShowRightPanel(true);
   };
+
+  const handleSelectedSubItem = (response: Datas) => {
+    if (!prevSelectedNode.current) {
+      prevSelectedNode.current = selectedNode;
+    } else {
+      prevSelectedNode.current = null;
+    }
+    setSelectedNode(response);
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchData = async () => {
+      try {
+        const { data } = await axios({
+          method: 'get',
+          url: `data/${match.params.entity}Config.json`,
+        });
+        setConfig(data);
+        setIsLoading(false);
+        setError('');
+      } catch (err) {
+        setIsLoading(false);
+        setConfig(initConfigState);
+        setError(err.message);
+      }
+    };
+    fetchData();
+  }, [match.params.entity]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data } = await axios({
           method: 'get',
-          url: `data/${SERVICE_FOLDER.context}.json`,
+          url: `data/${match.params.entity}.json`,
         });
         setDatas(data);
+        setError('');
       } catch (err) {
+        setDatas(null);
         setError(err.message);
       }
     };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (showBottomPanel && mainNode) {
-      const selectedEntityItemsFiltered = mainNode.dataItem.children.values.map(
-        item => {
-          return Object.values(item.dataContext).reduce((res, value) => {
-            if (value === selectedEntityItems.selectedGroupName) {
-              return item;
-            }
-            return res;
-          }, {});
-        }
-      );
-      setSelectedEntityItems({
-        ...selectedEntityItems,
-        entityItems: selectedEntityItemsFiltered,
-      });
+    if (Object.keys(config.context).length !== 0) {
+      fetchData();
     }
-  }, [mainNode, showBottomPanel]);
+  }, [config, match.params.entity]);
 
+  if (isLoading) return null;
+  if (Object.keys(config.context).length === 0 && !isLoading)
+    return <span>Impossible de charger la configuration</span>;
   return (
     <Root>
       {error && <span>{error}</span>}
-      <Header />
-      <LeftPanel />
+      <Header>
+        <h1>{config.context.name}</h1>
+      </Header>
       <Content>
-        <h1>{SERVICE_FOLDER.name}</h1>
         <Row>
           <Action
             selectItem={(item: Datas) => {
               setDatas(prevDatas => {
-                const tempDatas = prevDatas.map(prevData => {
-                  const tempData: Datas = {
-                    ...prevData,
-                    children: [...prevData.children],
-                  };
-                  tempData.children = [...tempData.children, item];
-                  return tempData;
-                });
-                return tempDatas;
+                return {
+                  ...prevDatas,
+                  children: [...prevDatas.children, item],
+                };
               });
             }}
+            config={config}
           />
           <Navigation>
             <ForceDirectedChart
               retreiveSelectedNode={handleSelectedNode}
-              callbackInitChart={(response: ForceDirectedNode) =>
-                setMainNode(response)
-              }
               datas={datas}
+              config={config}
             />
           </Navigation>
         </Row>
         <Column>
           <h2>Sélection détail</h2>
-          {mainNode && mainNode.dataItem.children.length > 0 ? (
+          {datas && datas.children.length > 0 ? (
             <TileList
-              lists={mainNode.dataItem.children.values}
+              lists={datas.children}
               handleClick={handleClick}
+              selectedEntity={selectedEntity}
             />
           ) : (
             <span>Aucune sélection</span>
           )}
         </Column>
       </Content>
+
       {showRightPanel && (
         <RightPanel
           closePanel={() => setShowRightPanel(false)}
-          title={selectedNode ? selectedNode.dataItem.name : 'Détail'}
+          title={selectedNode ? selectedNode.name : 'Détail'}
         >
-          <FakeRightPanelTemplate />
+          <FormBuilder
+            item={selectedNode}
+            selectNode={handleSelectedSubItem}
+            prevSelectedNode={prevSelectedNode}
+          />
         </RightPanel>
       )}
       {showBottomPanel && (
         <BottomPanel
-          item={selectedEntityItems}
+          list={datas.children.filter(list => {
+            return list.entity === selectedEntity;
+          })}
           handleSelect={handleSelectedNode}
           closePanel={() => setShowBottomPanel(false)}
         />

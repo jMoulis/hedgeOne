@@ -4,7 +4,7 @@ import { Button } from './Templates';
 
 const Root = styled.aside`
   grid-area: rightPanel;
-  position: absolute;
+  // position: absolute;
   min-width: 40rem;
   right: 0;
   top: 0;
