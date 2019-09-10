@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/hedgeOne/static/css/main.3a330cb4.chunk.css",
+    "main.js": "/hedgeOne/static/js/main.5df452a7.chunk.js",
+    "main.js.map": "/hedgeOne/static/js/main.5df452a7.chunk.js.map",
+    "runtime~main.js": "/hedgeOne/static/js/runtime~main.44ea5fb7.js",
+    "runtime~main.js.map": "/hedgeOne/static/js/runtime~main.44ea5fb7.js.map",
+    "xlsx.js": "/hedgeOne/static/js/xlsx.9a7143e5.chunk.js",
+    "xlsx.js.map": "/hedgeOne/static/js/xlsx.9a7143e5.chunk.js.map",
+    "static/js/3.5ba5cfa1.chunk.js": "/hedgeOne/static/js/3.5ba5cfa1.chunk.js",
+    "static/js/3.5ba5cfa1.chunk.js.map": "/hedgeOne/static/js/3.5ba5cfa1.chunk.js.map",
+    "static/js/4.a4488ff0.chunk.js": "/hedgeOne/static/js/4.a4488ff0.chunk.js",
+    "static/js/4.a4488ff0.chunk.js.map": "/hedgeOne/static/js/4.a4488ff0.chunk.js.map",
+    "static/js/5.7ae9a2e3.chunk.js": "/hedgeOne/static/js/5.7ae9a2e3.chunk.js",
+    "static/js/5.7ae9a2e3.chunk.js.map": "/hedgeOne/static/js/5.7ae9a2e3.chunk.js.map",
+    "static/js/6.3892bb0f.chunk.js": "/hedgeOne/static/js/6.3892bb0f.chunk.js",
+    "static/js/6.3892bb0f.chunk.js.map": "/hedgeOne/static/js/6.3892bb0f.chunk.js.map",
+    "index.html": "/hedgeOne/index.html",
+    "precache-manifest.7b7bc06897d22ea03b86a0c7945653ce.js": "/hedgeOne/precache-manifest.7b7bc06897d22ea03b86a0c7945653ce.js",
+    "service-worker.js": "/hedgeOne/service-worker.js",
+    "static/css/main.3a330cb4.chunk.css.map": "/hedgeOne/static/css/main.3a330cb4.chunk.css.map"
+  }
+}
