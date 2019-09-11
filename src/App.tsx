@@ -53,6 +53,7 @@ const App = () => {
 
   return (
     <Root>
+      {error && <span>{error}</span>}
       <Header />
       {isLoading ? (
         <span>Chargement en cours</span>

@@ -1,14 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4chart from '@amcharts/amcharts4/charts';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import {
   ForceDirectedTree,
   ForceDirectedSeries,
+  ForceDirectedNode,
 } from '@amcharts/amcharts4/plugins/forceDirected';
 import styled from '@emotion/styled';
+import ListIcon from '../assets/icons/list.svg';
+import ValorisationIcon from '../assets/icons/valorisation.svg';
 import { ConfigState } from './forceDirected';
 
 const Chart = styled.div`
@@ -21,96 +24,175 @@ interface Props {
   config: ConfigState;
 }
 
-function ForceDirectedChart({ retreiveSelectedNode, datas, config }: Props) {
-  const chartRef = useRef<any>();
-  const seriesRef = useRef<any>();
-  const menuRef = useRef<any>();
-  const [selectedNode, setSelectedNode] = useState<any | null>(null);
+const actions = {
+  valorisation: () => alert('openValorisation'),
+  toggle: node => {
+    const activeNode = node;
+    if (node) {
+      activeNode.isActive = !node.isActive;
+    }
+    console.log(node);
+  },
+};
 
-  console.log('test');
+function ForceDirectedChart({ retreiveSelectedNode, datas, config }: Props) {
+  const chartRef = useRef<ForceDirectedTree | null>(null);
+  const seriesRef = useRef<ForceDirectedSeries | null>(null);
+  // const menuRef = useRef<am4chart.PieChart | null>(null);
+  const testSelectedNode = useRef<ForceDirectedNode | null>(null);
+  const buildPieChart = container => {
+    const menuRefData = (containerHeight: number) => {
+      console.log(containerHeight);
+      return [
+        {
+          action: 'Slice1',
+          weight: 90,
+          image: ValorisationIcon,
+          x: 50,
+          y: -65,
+          callbackKey: 'valorisation',
+        },
+        {
+          action: 'Slice2',
+          weight: 90,
+          image: ListIcon,
+          x: 50,
+          y: 40,
+          callbackKey: 'toggle',
+        },
+        {
+          action: 'Slice3',
+          weight: 90,
+          image: ValorisationIcon,
+          x: -75,
+          y: 40,
+          callbackKey: 'valorisation',
+        },
+        {
+          action: 'Slice4',
+          weight: 90,
+          image: ListIcon,
+          x: -75,
+          y: -65,
+          callbackKey: 'toggle',
+        },
+      ];
+    };
+    const points: am4core.IPoint = {
+      x: -(container.contentWidth + 150) / 2,
+      y: -(container.contentWidth + 150) / 2,
+    };
+    const menuRef = container.createChild(am4chart.PieChart);
+
+    const { height } = container.bbox;
+    menuRef.data = menuRefData(height);
+    menuRef.isMeasured = false;
+    menuRef.width = container.contentWidth + 150;
+    menuRef.height = container.contentWidth + 150;
+    menuRef.moveTo(points);
+    menuRef.isMeasured = false;
+    menuRef.toBack();
+
+    /**
+     * MenuSeries (PieSeries)
+     */
+    const menuSeries = menuRef.series.push(new am4chart.PieSeries());
+    menuSeries.dataFields.value = 'weight';
+    menuSeries.hiddenState.properties.endAngle = -90;
+    menuSeries.ticks.template.disabled = true;
+    menuSeries.slices.template.togglable = false;
+    menuSeries.slices.template.strokeWidth = 2;
+    menuSeries.slices.template.strokeOpacity = 1;
+    menuSeries.slices.template.tooltipText = '';
+    menuSeries.labels.template.text = '';
+    menuSeries.labels.template.padding(0, 0, 0, 0);
+
+    /**
+     * Add icons
+     */
+    const icon: am4core.Image = menuSeries.slices.template.createChild(
+      am4core.Image
+    );
+    icon.isMeasured = false;
+    icon.propertyFields.href = 'image';
+    icon.width = 30;
+    icon.height = 30;
+    icon.propertyFields.x = 'x';
+    icon.propertyFields.y = 'y';
+
+    /**
+     * Events Callback
+     */
+    menuSeries.slices.template.events.on('hit', ({ target }) => {
+      const pieChart: am4chart.PieChart = target.dataItem.component.chart;
+      const { callbackKey } = target.dataItem.dataContext;
+      const callback = actions[callbackKey];
+      if (typeof callback === 'function') {
+        actions[callbackKey](testSelectedNode.current);
+      }
+      pieChart.dispose();
+    });
+    return menuRef;
+  };
+
   useEffect(() => {
     am4core.useTheme(am4themesAnimated);
     chartRef.current = am4core.create('chartdiv', ForceDirectedTree);
 
-    if (config) {
+    if (config && chartRef.current) {
       seriesRef.current = new ForceDirectedSeries();
-      if (chartRef.current && seriesRef.current) {
-        chartRef.current.series.push(seriesRef.current);
-        chartRef.current.padding(0, 0, 0, 0);
-        seriesRef.current.config = config.series;
-        seriesRef.current.nodes.template.togglable = false;
+      chartRef.current.series.push(seriesRef.current);
+      chartRef.current.padding(0, 0, 0, 0);
+      seriesRef.current.config = config.series;
+      seriesRef.current.nodes.template.togglable = false;
+      // seriesRef.current.nodes.template.outerCircle.fill = am4core.color(
+      //   '#000000'
+      // );
 
-        seriesRef.current.nodes.template.events.on('hit', event => {
-          if (!menuRef.current) {
-            const points: am4core.IPoint = {
-              x: -(event.target.contentWidth + 100) / 2,
-              y: -(event.target.contentWidth + 100) / 2,
-            };
-            menuRef.current = event.target.createChild(am4chart.PieChart);
-            menuRef.current.isMeasured = false;
-            menuRef.current.width = event.target.contentWidth + 100;
-            menuRef.current.height = event.target.contentWidth + 100;
-            menuRef.current.moveTo(points);
-            menuRef.current.toBack();
-            menuRef.current.data = [
-              {
-                action: 'Valorisation',
-                weight: 90,
-              },
-              {
-                action: 'Delete',
-                weight: 90,
-              },
-              {
-                action: 'Enfant',
-                weight: 90,
-              },
-              {
-                action: 'AfterWork',
-                weight: 90,
-              },
-            ];
-            const menuSeries = menuRef.current.series.push(
-              new am4chart.PieSeries()
-            );
-            menuSeries.dataFields.value = 'weight';
-            menuSeries.slices.template.strokeWidth = 2;
-            menuSeries.slices.template.strokeOpacity = 1;
-            menuSeries.alignLabels = false;
-            menuSeries.labels.template.text = '{action}';
-            menuSeries.labels.template.bent = true;
-            menuSeries.labels.template.radius = -10;
-            menuSeries.labels.template.padding(0, 0, 0, 0);
-            console.log(menuSeries.labels.template);
-            menuSeries.labels.template.getFillFromObject = false;
-            menuSeries.ticks.template.disabled = true;
-            menuSeries.slices.template.tooltipText = '';
-            menuRef.current.isMeasured = false;
-          }
-          setSelectedNode(event.target.dataItem.dataContext);
-          retreiveSelectedNode(event.target.dataItem.dataContext);
-        });
+      seriesRef.current.nodes.template.events.on('hit', ({ target }) => {
+        const pieChart = target.children.values.find(
+          child => child instanceof am4chart.PieChart
+        );
+        if (!pieChart) {
+          buildPieChart(target);
+        }
+        testSelectedNode.current = target;
+        retreiveSelectedNode(target.dataItem.dataContext);
+      });
 
-        seriesRef.current.nodes.template.events.on('drag', event => {
-          if (menuRef.current) {
-            menuRef.current.hide(0);
-          }
-        });
-        seriesRef.current.nodes.template.events.on('doublehit', event => {
-          console.log('doubleclick');
-          console.log(event.target.togglable);
-          const { target } = event;
-          target.togglable = true;
-          // seriesRef.current.nodes.template.togglable = true;
-        });
-      }
+      seriesRef.current.nodes.template.events.on('over', ({ target }) => {
+        const pieChart = target.children.values.find(
+          child => child instanceof am4chart.PieChart
+        );
+        if (!pieChart) {
+          buildPieChart(target);
+        }
+        testSelectedNode.current = target;
+        retreiveSelectedNode(target.dataItem.dataContext);
+      });
+
+      seriesRef.current.nodes.template.events.on('out', ({ target }) => {
+        const pieChart = target.children.values.find(
+          child => child instanceof am4chart.PieChart
+        );
+        if (pieChart) {
+          // pieChart.dispose();
+        }
+      });
+
+      seriesRef.current.nodes.template.events.on('doublehit', ({ target }) => {
+        const pieChart = target.children.values.find(
+          child => child instanceof am4chart.PieChart
+        );
+        if (pieChart) {
+          pieChart.dispose();
+        }
+      });
     }
+
     return () => {
       if (chartRef.current) {
         chartRef.current.dispose();
-      }
-      if (menuRef.current) {
-        menuRef.current.dispose();
       }
     };
   }, [config]);
@@ -125,11 +207,7 @@ function ForceDirectedChart({ retreiveSelectedNode, datas, config }: Props) {
     }
   }, [datas]);
 
-  return (
-    <>
-      <Chart id="chartdiv" />
-    </>
-  );
+  return <Chart id="chartdiv" />;
 }
 
 export default ForceDirectedChart;

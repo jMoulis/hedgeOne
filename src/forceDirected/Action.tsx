@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import Modal from './Modal';
 import { Button } from './Templates';
-import { CONFIG } from './config';
 import { ConfigState } from './forceDirected';
 
 const Root = styled.div``;
