@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/hedgeOne/precache-manifest.e5fa96042ffea1aee90b553a2e45b6fc.js"
+  "/hedgeOne/precache-manifest.f88d523ea8b257b9062c93d472834e45.js"
 );
 
 self.addEventListener('message', (event) => {

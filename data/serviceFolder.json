@@ -3,5 +3,28 @@
   "entity": "serviceFolder",
   "name": "Service Folder",
   "children": [],
-  "value": 5000
+  "value": 5000,
+  "valorisations": [
+    {
+      "id": 3,
+      "entity": "Prix d'achat",
+      "date": "12/12/2009",
+      "price": 12340,
+      "quantity": 12
+    },
+    {
+      "id": 5,
+      "entity": "Prix d'achat",
+      "date": "12/12/2012",
+      "price": 230,
+      "quantity": 10
+    },
+    {
+      "id": 2,
+      "entity": "Prix d'achat",
+      "date": "12/12/2019",
+      "price": 430,
+      "quantity": 9
+    }
+  ]
 }

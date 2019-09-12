@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/hedgeOne/static/css/main.3a330cb4.chunk.css",
-    "main.js": "/hedgeOne/static/js/main.093a04af.chunk.js",
-    "main.js.map": "/hedgeOne/static/js/main.093a04af.chunk.js.map",
+    "main.js": "/hedgeOne/static/js/main.d7b71204.chunk.js",
+    "main.js.map": "/hedgeOne/static/js/main.d7b71204.chunk.js.map",
     "runtime~main.js": "/hedgeOne/static/js/runtime~main.f4610526.js",
     "runtime~main.js.map": "/hedgeOne/static/js/runtime~main.f4610526.js.map",
     "xlsx.js": "/hedgeOne/static/js/xlsx.5513b4b0.chunk.js",
     "xlsx.js.map": "/hedgeOne/static/js/xlsx.5513b4b0.chunk.js.map",
-    "static/js/3.2d0b25c0.chunk.js": "/hedgeOne/static/js/3.2d0b25c0.chunk.js",
-    "static/js/3.2d0b25c0.chunk.js.map": "/hedgeOne/static/js/3.2d0b25c0.chunk.js.map",
+    "static/js/3.b4e31aa8.chunk.js": "/hedgeOne/static/js/3.b4e31aa8.chunk.js",
+    "static/js/3.b4e31aa8.chunk.js.map": "/hedgeOne/static/js/3.b4e31aa8.chunk.js.map",
     "static/js/4.71cdcebe.chunk.js": "/hedgeOne/static/js/4.71cdcebe.chunk.js",
     "static/js/4.71cdcebe.chunk.js.map": "/hedgeOne/static/js/4.71cdcebe.chunk.js.map",
     "static/js/5.00db0a80.chunk.js": "/hedgeOne/static/js/5.00db0a80.chunk.js",
@@ -16,10 +16,11 @@
     "static/js/6.662ada96.chunk.js": "/hedgeOne/static/js/6.662ada96.chunk.js",
     "static/js/6.662ada96.chunk.js.map": "/hedgeOne/static/js/6.662ada96.chunk.js.map",
     "index.html": "/hedgeOne/index.html",
-    "precache-manifest.e5fa96042ffea1aee90b553a2e45b6fc.js": "/hedgeOne/precache-manifest.e5fa96042ffea1aee90b553a2e45b6fc.js",
+    "precache-manifest.f88d523ea8b257b9062c93d472834e45.js": "/hedgeOne/precache-manifest.f88d523ea8b257b9062c93d472834e45.js",
     "service-worker.js": "/hedgeOne/service-worker.js",
     "static/css/main.3a330cb4.chunk.css.map": "/hedgeOne/static/css/main.3a330cb4.chunk.css.map",
     "static/media/backIcon.9ff83b3f.svg": "/hedgeOne/static/media/backIcon.9ff83b3f.svg",
+    "static/media/dollar.63fa626f.svg": "/hedgeOne/static/media/dollar.63fa626f.svg",
     "static/media/list.svg": "/hedgeOne/static/media/list.b39fb484.svg",
     "static/media/valorisation.svg": "/hedgeOne/static/media/valorisation.ec937b18.svg"
   }
