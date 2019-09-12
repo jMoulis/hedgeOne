@@ -28,7 +28,6 @@ const TileList: FunctionComponent<Props> = ({
   selectedEntity,
 }) => {
   const [groupedLists, setGroupList] = useState<object>({});
-
   useEffect(() => {
     const groupListItem = (entity: string, arrayItem: Datas[]) =>
       arrayItem.reduce((acc, item) => {

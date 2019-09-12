@@ -130,10 +130,13 @@ function Force({ match }) {
     }
   }, [config, match.params.entity]);
 
+  useEffect(() => {
+    setShowBottomPanel(false);
+  }, [actionType, selectedNode]);
+
   if (isLoading) return null;
   if (Object.keys(config.context).length === 0 && !isLoading)
     return <span>Impossible de charger la configuration</span>;
-
   return (
     <Root>
       {error && <span>{error}</span>}
@@ -161,10 +164,15 @@ function Force({ match }) {
           </Navigation>
         </Row>
         <Column>
-          <h2>Sélection détail</h2>
-          {datas && datas.children.length > 0 ? (
+          <h2>{`Détail ${actionType === 'valorisation' ? actionType : ''}`}</h2>
+          {datas &&
+          (datas.children.length > 0 || datas.valorisations.length > 0) ? (
             <TileList
-              lists={datas.children}
+              lists={
+                actionType === 'valorisation'
+                  ? datas.valorisations
+                  : datas.children
+              }
               handleClick={handleClick}
               selectedEntity={selectedEntity}
             />
@@ -178,12 +186,16 @@ function Force({ match }) {
         <RightPanel
           closePanel={() => setShowRightPanel(false)}
           title={selectedNode ? selectedNode.name : 'Détail'}
-          actionType={actionType}
           selectNode={handleSelectedSubItem}
           prevSelectedNode={prevSelectedNode}
-          setActionType={setActionType}
         >
-          {actionType !== 'valorisation' ? (
+          <FormBuilder
+            item={selectedNode}
+            selectNode={handleSelectedSubItem}
+            prevSelectedNode={prevSelectedNode}
+            setActionType={setActionType}
+          />
+          {/* {actionType !== 'valorisation' ? (
             <FormBuilder
               item={selectedNode}
               selectNode={handleSelectedSubItem}
@@ -192,14 +204,20 @@ function Force({ match }) {
             />
           ) : (
             <Valorisation setActionType={setActionType} />
-          )}
+          )} */}
         </RightPanel>
       )}
       {showBottomPanel && (
         <BottomPanel
-          list={datas.children.filter(list => {
-            return list.entity === selectedEntity;
-          })}
+          list={
+            actionType === 'valorisation'
+              ? datas.valorisations.filter(list => {
+                  return list.entity === selectedEntity;
+                })
+              : datas.children.filter(list => {
+                  return list.entity === selectedEntity;
+                })
+          }
           selectNodeInformation={handleSelectedNodeInformation}
           closePanel={() => setShowBottomPanel(false)}
           setActionType={setActionType}

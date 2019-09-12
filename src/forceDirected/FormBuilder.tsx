@@ -18,17 +18,20 @@ const Label = styled.label`
 `;
 
 const ListItem = styled.li`
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
 `;
 
-const FormBuilder: React.FC<Props> = ({
-  item,
-  selectNode,
-  prevSelectedNode,
-  setActionType,
-}) => {
+const ValorisationLink = styled.span`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const FormBuilder: React.FC<Props> = ({ item, selectNode, setActionType }) => {
   const renderForm = (object: any) => {
     return Object.entries(object).map((entry, index) => {
       const label: string = entry[0];
@@ -46,6 +49,15 @@ const FormBuilder: React.FC<Props> = ({
               ))}
             </ul>
           )}
+          {label === 'valorisations' && (
+            <>
+              {value.length > 0 ? (
+                <ValorisationLink onClick={() => setActionType('valorisation')}>
+                  Consulter
+                </ValorisationLink>
+              ) : null}
+            </>
+          )}
           {typeof value === 'string' || typeof value === 'number' ? (
             <span>{value}</span>
           ) : null}
@@ -56,11 +68,6 @@ const FormBuilder: React.FC<Props> = ({
   return (
     <div>
       <div>{renderForm(item)}</div>
-      <div>
-        <Button width={10} onClick={() => setActionType('valorisation')}>
-          Valorisation
-        </Button>
-      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { Button } from './Templates';
+import { ReactComponent as DollarIcon } from '../assets/icons/dollar.svg';
 
 const Root = styled.div`
   flex: 1;
@@ -8,11 +9,13 @@ const Root = styled.div`
   grid-area: bottomPanel;
   box-shadow: 0px -2px 5px -1px rgba(153, 153, 153, 1);
 `;
-const List = styled.ul``;
+
+const List = styled.ul`
+  display: flex;
+`;
 
 const ListItem = styled.li`
   padding: 1rem;
-  min-width: 20rem;
   text-align: center;
   text-transform: capitalize;
   transition: all 150ms;
@@ -35,6 +38,12 @@ const Header = styled.header`
 const Content = styled.div``;
 const Buttons = styled.div`
   display: flex;
+`;
+
+const Informations = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
 `;
 
 // TODO: Change Any
@@ -66,22 +75,42 @@ const BottomPanel: FunctionComponent<Props> = ({
       </Header>
       <Content>
         {list && (
-          <List>
+          <ul>
             {list.map(entityItem => {
               if (Object.keys(entityItem).length === 0) return null;
               return (
-                <ListItem
-                  key={entityItem._id}
-                  onClick={() => {
-                    setActionType('information');
-                    selectNodeInformation(entityItem);
-                  }}
-                >
-                  <div>{entityItem.name}</div>
+                <ListItem key={entityItem._id}>
+                  <Informations
+                    onClick={() => {
+                      setActionType(null);
+                      selectNodeInformation(entityItem);
+                    }}
+                  >
+                    <List>
+                      {Object.keys(entityItem).map(key => {
+                        if (typeof entityItem[key] !== 'string') return null;
+                        return <ListItem key={key}>{entityItem[key]}</ListItem>;
+                      })}
+                    </List>
+                  </Informations>
                   <Buttons>
                     <Button
+                      onClick={() => {
+                        setActionType('valorisation');
+                        selectNodeInformation(entityItem);
+                      }}
                       type="button"
                       bgColor="blue"
+                      color="white"
+                      width={2}
+                      height={2}
+                      radius={2}
+                    >
+                      <DollarIcon width="15" height="15" />
+                    </Button>
+                    <Button
+                      type="button"
+                      bgColor="green"
                       color="white"
                       width={2}
                       height={2}
@@ -99,7 +128,7 @@ const BottomPanel: FunctionComponent<Props> = ({
                 </ListItem>
               );
             })}
-          </List>
+          </ul>
         )}
       </Content>
     </Root>

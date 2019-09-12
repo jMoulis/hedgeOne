@@ -40,20 +40,16 @@ const SubHeader = styled.div`
 interface Props {
   closePanel: any;
   title?: string;
-  actionType: string | null;
   prevSelectedNode: any;
   selectNode: Function;
-  setActionType: Function;
 }
 
 const RightPanel: FunctionComponent<Props> = ({
   children,
   closePanel,
   title,
-  actionType,
   selectNode,
   prevSelectedNode,
-  setActionType,
 }) => {
   return (
     <Root>
@@ -69,7 +65,7 @@ const RightPanel: FunctionComponent<Props> = ({
           radius="200"
         />
       </Header>
-      {(prevSelectedNode.current || actionType === 'valorisation') && (
+      {prevSelectedNode.current && (
         <SubHeader>
           <ReturnButton
             height="20"
@@ -77,11 +73,7 @@ const RightPanel: FunctionComponent<Props> = ({
             role="button"
             tabIndex={0}
             onClick={() => {
-              if (actionType === 'valorisation') {
-                setActionType(null);
-              } else {
-                selectNode(prevSelectedNode.current);
-              }
+              selectNode(prevSelectedNode.current);
             }}
           />
         </SubHeader>
