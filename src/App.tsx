@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import styled from '@emotion/styled';
+import Axios from 'axios';
 import Force from './forceDirected/Force';
 import LeftPanel from './forceDirected/LeftPanel';
 import Header from './forceDirected/Header';
+// eslint-disable-next-line import/no-unresolved
 import { MenuProps } from './forceDirected/forceDirected';
-import Axios from 'axios';
 
 const Root = styled.main`
   display: grid;

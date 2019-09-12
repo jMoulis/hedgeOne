@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { Button } from './Templates';
+import { ReactComponent as ReturnIcon } from '../assets/icons/backIcon.svg';
 
 const Root = styled.aside`
   grid-area: rightPanel;
@@ -16,7 +17,6 @@ const Header = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
   background-color: lightblue;
   padding: 1rem;
 `;
@@ -25,16 +25,35 @@ const Content = styled.div`
   padding: 1rem;
 `;
 
+const ReturnButton = styled(ReturnIcon)`
+  display: block;
+  margin: 0.5rem;
+`;
+
+const SubHeader = styled.div`
+  background-color: lightGray;
+  display: flex;
+  align-items: center;
+`;
+
 // TODO: Modify any type
 interface Props {
   closePanel: any;
   title?: string;
+  actionType: string | null;
+  prevSelectedNode: any;
+  selectNode: Function;
+  setActionType: Function;
 }
 
 const RightPanel: FunctionComponent<Props> = ({
   children,
   closePanel,
   title,
+  actionType,
+  selectNode,
+  prevSelectedNode,
+  setActionType,
 }) => {
   return (
     <Root>
@@ -50,6 +69,23 @@ const RightPanel: FunctionComponent<Props> = ({
           radius="200"
         />
       </Header>
+      {(prevSelectedNode.current || actionType === 'valorisation') && (
+        <SubHeader>
+          <ReturnButton
+            height="20"
+            width="20"
+            role="button"
+            tabIndex={0}
+            onClick={() => {
+              if (actionType === 'valorisation') {
+                setActionType(null);
+              } else {
+                selectNode(prevSelectedNode.current);
+              }
+            }}
+          />
+        </SubHeader>
+      )}
       <Content>{children}</Content>
     </Root>
   );

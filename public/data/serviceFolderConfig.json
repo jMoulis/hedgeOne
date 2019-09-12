@@ -18,7 +18,7 @@
   },
   "series": {
     "type": "ForceDirectedSeries",
-    "maxLevels": 3,
+    "maxLevels": 2,
     "dataFields": {
       "value": "value",
       "name": "name",

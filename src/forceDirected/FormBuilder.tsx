@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { Button } from './Templates';
 
 interface Props {
   item: any;
   selectNode: Function;
+  setActionType: Function;
   prevSelectedNode: {
     current: any;
   };
@@ -25,6 +27,7 @@ const FormBuilder: React.FC<Props> = ({
   item,
   selectNode,
   prevSelectedNode,
+  setActionType,
 }) => {
   const renderForm = (object: any) => {
     return Object.entries(object).map((entry, index) => {
@@ -37,12 +40,7 @@ const FormBuilder: React.FC<Props> = ({
           {label === 'children' && (
             <ul>
               {value.map((child, idx) => (
-                <ListItem
-                  key={idx}
-                  onClick={() => {
-                    selectNode(child);
-                  }}
-                >
+                <ListItem key={idx} onClick={() => selectNode(child)}>
                   {child.name}
                 </ListItem>
               ))}
@@ -57,14 +55,12 @@ const FormBuilder: React.FC<Props> = ({
   };
   return (
     <div>
-      {prevSelectedNode.current && (
-        <span
-          onClick={() => {
-            selectNode(prevSelectedNode.current);
-          }}
-        >{`<-`}</span>
-      )}
       <div>{renderForm(item)}</div>
+      <div>
+        <Button width={10} onClick={() => setActionType('valorisation')}>
+          Valorisation
+        </Button>
+      </div>
     </div>
   );
 };

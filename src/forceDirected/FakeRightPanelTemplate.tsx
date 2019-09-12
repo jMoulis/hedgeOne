@@ -41,10 +41,6 @@ const FakeRightPanelTemplate = () => {
         <Bar height={1.5} width={15} color="gray" marginBottom={0.5} />
         <Bar height={1.5} width={20} color="gray" marginBottom={0.5} />
       </Column>
-      <Row>
-        <Button />
-        <Button bgColor="orange" />
-      </Row>
     </div>
   );
 };

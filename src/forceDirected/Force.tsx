@@ -9,6 +9,7 @@ import TileList from './Tile/TileList';
 import BottomPanel from './BottomPanel';
 import FormBuilder from './FormBuilder';
 import { ConfigState } from './forceDirected';
+import Valorisation from './Valorisation';
 
 const Root = styled.main`
   display: grid;
@@ -61,6 +62,7 @@ function Force({ match }) {
   };
   const prevSelectedNode = useRef<Datas | null>(null);
   const [selectedNode, setSelectedNode] = useState<Datas | null>(null);
+  const [actionType, setActionType] = useState<string | null>(null);
   const [showRightPanel, setShowRightPanel] = useState<boolean>(false);
   const [showBottomPanel, setShowBottomPanel] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
@@ -74,7 +76,7 @@ function Force({ match }) {
     setShowBottomPanel(true);
   };
 
-  const handleSelectedNode = (response: Datas) => {
+  const handleSelectedNodeInformation = (response: Datas) => {
     prevSelectedNode.current = null;
     setSelectedNode(response);
     setShowRightPanel(true);
@@ -131,6 +133,7 @@ function Force({ match }) {
   if (isLoading) return null;
   if (Object.keys(config.context).length === 0 && !isLoading)
     return <span>Impossible de charger la configuration</span>;
+
   return (
     <Root>
       {error && <span>{error}</span>}
@@ -140,21 +143,20 @@ function Force({ match }) {
       <Content>
         <Row>
           <Action
-            selectItem={(item: Datas) => {
-              setDatas(prevDatas => {
-                return {
-                  ...prevDatas,
-                  children: [...prevDatas.children, item],
-                };
-              });
-            }}
+            selectItem={(item: Datas) =>
+              setDatas(prevDatas => ({
+                ...prevDatas,
+                children: [...prevDatas.children, item],
+              }))
+            }
             config={config}
           />
           <Navigation>
             <ForceDirectedChart
-              retreiveSelectedNode={handleSelectedNode}
+              retreiveSelectedNodeInformation={handleSelectedNodeInformation}
               datas={datas}
               config={config}
+              setActionType={setActionType}
             />
           </Navigation>
         </Row>
@@ -176,12 +178,21 @@ function Force({ match }) {
         <RightPanel
           closePanel={() => setShowRightPanel(false)}
           title={selectedNode ? selectedNode.name : 'Détail'}
+          actionType={actionType}
+          selectNode={handleSelectedSubItem}
+          prevSelectedNode={prevSelectedNode}
+          setActionType={setActionType}
         >
-          <FormBuilder
-            item={selectedNode}
-            selectNode={handleSelectedSubItem}
-            prevSelectedNode={prevSelectedNode}
-          />
+          {actionType !== 'valorisation' ? (
+            <FormBuilder
+              item={selectedNode}
+              selectNode={handleSelectedSubItem}
+              prevSelectedNode={prevSelectedNode}
+              setActionType={setActionType}
+            />
+          ) : (
+            <Valorisation setActionType={setActionType} />
+          )}
         </RightPanel>
       )}
       {showBottomPanel && (
@@ -189,8 +200,9 @@ function Force({ match }) {
           list={datas.children.filter(list => {
             return list.entity === selectedEntity;
           })}
-          handleSelect={handleSelectedNode}
+          selectNodeInformation={handleSelectedNodeInformation}
           closePanel={() => setShowBottomPanel(false)}
+          setActionType={setActionType}
         />
       )}
     </Root>

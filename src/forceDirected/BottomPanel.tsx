@@ -2,13 +2,6 @@ import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { Button } from './Templates';
 
-// TODO: Change Any
-interface Props {
-  list: any;
-  handleSelect: Function;
-  closePanel: any;
-}
-
 const Root = styled.div`
   flex: 1;
   min-width: 100%;
@@ -44,10 +37,18 @@ const Buttons = styled.div`
   display: flex;
 `;
 
+// TODO: Change Any
+interface Props {
+  list: any;
+  selectNodeInformation: Function;
+  setActionType: Function;
+  closePanel: any;
+}
 const BottomPanel: FunctionComponent<Props> = ({
   list,
-  handleSelect,
+  selectNodeInformation,
   closePanel,
+  setActionType,
 }) => {
   return (
     <Root>
@@ -71,7 +72,10 @@ const BottomPanel: FunctionComponent<Props> = ({
               return (
                 <ListItem
                   key={entityItem._id}
-                  onClick={() => handleSelect(entityItem)}
+                  onClick={() => {
+                    setActionType('information');
+                    selectNodeInformation(entityItem);
+                  }}
                 >
                   <div>{entityItem.name}</div>
                   <Buttons>

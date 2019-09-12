@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import Modal from './Modal';
 import { Button } from './Templates';
+// eslint-disable-next-line import/no-unresolved
 import { ConfigState } from './forceDirected';
 
 const Root = styled.div``;
