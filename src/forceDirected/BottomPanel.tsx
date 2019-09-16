@@ -67,6 +67,8 @@ const BottomPanel: FunctionComponent<Props> = ({
   entity,
   actionType,
 }) => {
+  const HOST = 'https://jmoulis.github.io/hedgeOne';
+  // const HOST = 'http://localhost:3000';
   return (
     <Root>
       <Header>
@@ -92,7 +94,7 @@ const BottomPanel: FunctionComponent<Props> = ({
                     onClick={() => {
                       // setActionType(null);
                       // selectNodeInformation(entityItem);
-                      const root = `http://localhost:3000/${entity}`;
+                      const root = `${HOST}/${entity}`;
                       const searchQuery = entityItem.parent_id
                         ? `?id=${entityItem.parent_id}`
                         : '';
@@ -135,8 +137,6 @@ const BottomPanel: FunctionComponent<Props> = ({
                       height={2}
                       radius={2}
                       onClick={() => {
-                        const HOST = 'https://jmoulis.github.io/hedgeOne';
-                        // const HOST = 'http://localhost:3000';
                         const root = `${HOST}/${entity}`;
                         const searchQuery = entityItem.parent_id
                           ? `?id=${entityItem.parent_id}`
