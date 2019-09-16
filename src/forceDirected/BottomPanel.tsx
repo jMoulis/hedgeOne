@@ -19,9 +19,10 @@ const ListItem = styled.li`
   text-align: center;
   text-transform: capitalize;
   transition: all 150ms;
-  cursor: pointer;
+  // cursor: pointer;
   display: flex;
   align-items: center;
+  overflow: hidden;
   justify-content: space-between;
   &:hover {
     background-color: #e4e4e4;
@@ -48,16 +49,23 @@ const Informations = styled.div`
 
 // TODO: Change Any
 interface Props {
-  list: any;
+  list: any[] | null;
   selectNodeInformation: Function;
   setActionType: Function;
+  setTabs: Function;
   closePanel: any;
+  entity: string;
+  actionType: string;
 }
+
 const BottomPanel: FunctionComponent<Props> = ({
   list,
   selectNodeInformation,
   closePanel,
   setActionType,
+  setTabs,
+  entity,
+  actionType,
 }) => {
   return (
     <Root>
@@ -79,11 +87,20 @@ const BottomPanel: FunctionComponent<Props> = ({
             {list.map(entityItem => {
               if (Object.keys(entityItem).length === 0) return null;
               return (
-                <ListItem key={entityItem._id}>
+                <ListItem key={entityItem.id}>
                   <Informations
                     onClick={() => {
-                      setActionType(null);
-                      selectNodeInformation(entityItem);
+                      // setActionType(null);
+                      // selectNodeInformation(entityItem);
+                      const root = `http://localhost:3000/${entity}`;
+                      const searchQuery = entityItem.parent_id
+                        ? `?id=${entityItem.parent_id}`
+                        : '';
+                      const url = `${root}${searchQuery}`;
+                      setTabs(prevTabs => [
+                        ...prevTabs,
+                        window.open(`${url}`, '_blank'),
+                      ]);
                     }}
                   >
                     <List>
@@ -94,20 +111,22 @@ const BottomPanel: FunctionComponent<Props> = ({
                     </List>
                   </Informations>
                   <Buttons>
-                    <Button
-                      onClick={() => {
-                        setActionType('valorisation');
-                        selectNodeInformation(entityItem);
-                      }}
-                      type="button"
-                      bgColor="blue"
-                      color="white"
-                      width={2}
-                      height={2}
-                      radius={2}
-                    >
-                      <DollarIcon width="15" height="15" />
-                    </Button>
+                    {/* {actionType !== 'valorisation' && (
+                      <Button
+                        onClick={() => {
+                          setActionType('valorisation');
+                          selectNodeInformation(entityItem);
+                        }}
+                        type="button"
+                        bgColor="blue"
+                        color="white"
+                        width={2}
+                        height={2}
+                        radius={2}
+                      >
+                        <DollarIcon width="15" height="15" />
+                      </Button>
+                    )} */}
                     <Button
                       type="button"
                       bgColor="green"
@@ -115,6 +134,17 @@ const BottomPanel: FunctionComponent<Props> = ({
                       width={2}
                       height={2}
                       radius={2}
+                      onClick={() => {
+                        const root = `http://localhost:3000/${entity}`;
+                        const searchQuery = entityItem.parent_id
+                          ? `?id=${entityItem.parent_id}`
+                          : '';
+                        const url = `${root}${searchQuery}`;
+                        setTabs(prevTabs => [
+                          ...prevTabs,
+                          window.open(`${url}`, '_blank'),
+                        ]);
+                      }}
                     />
                     <Button
                       type="button"

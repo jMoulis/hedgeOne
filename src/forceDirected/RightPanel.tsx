@@ -5,7 +5,6 @@ import { ReactComponent as ReturnIcon } from '../assets/icons/backIcon.svg';
 
 const Root = styled.aside`
   grid-area: rightPanel;
-  // position: absolute;
   min-width: 40rem;
   right: 0;
   top: 0;
@@ -28,6 +27,7 @@ const Content = styled.div`
 const ReturnButton = styled(ReturnIcon)`
   display: block;
   margin: 0.5rem;
+  cursor: pointer;
 `;
 
 const SubHeader = styled.div`

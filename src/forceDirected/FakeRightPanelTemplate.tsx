@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Bar, Label, Button } from './Templates';
+import { Bar, Label } from './Templates';
 
 const Row = styled.div`
   display: flex;

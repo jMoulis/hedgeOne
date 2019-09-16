@@ -2,14 +2,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import axios from 'axios';
+import queryString from 'query-string';
 import ForceDirectedChart from './ForceDirectedChart';
 import Action from './Action';
 import RightPanel from './RightPanel';
 import TileList from './Tile/TileList';
 import BottomPanel from './BottomPanel';
 import FormBuilder from './FormBuilder';
+// eslint-disable-next-line import/no-unresolved
 import { ConfigState } from './forceDirected';
-import Valorisation from './Valorisation';
 
 const Root = styled.main`
   display: grid;
@@ -46,7 +47,7 @@ const Content = styled.div`
   grid-area: content;
 `;
 
-function Force({ match }) {
+function Force({ match, location }) {
   interface Datas {
     name: string;
     value: number;
@@ -55,6 +56,7 @@ function Force({ match }) {
     children: Datas[];
     id: string;
     navigation: any;
+    valorisations: any;
   }
   const initConfigState = {
     series: [],
@@ -62,14 +64,15 @@ function Force({ match }) {
   };
   const prevSelectedNode = useRef<Datas | null>(null);
   const [selectedNode, setSelectedNode] = useState<Datas | null>(null);
-  const [actionType, setActionType] = useState<string | null>(null);
+  const [actionType, setActionType] = useState<string>('');
   const [showRightPanel, setShowRightPanel] = useState<boolean>(false);
   const [showBottomPanel, setShowBottomPanel] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
-  const [datas, setDatas] = useState<any>(null);
-  const [selectedEntity, setSelectedEntity] = useState<string>();
+  const [data, setData] = useState<any>(null);
+  const [selectedEntity, setSelectedEntity] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [config, setConfig] = useState<ConfigState>(initConfigState);
+  const [tabs, setTabs] = useState([]);
 
   const handleClick = (entityName: string) => {
     setSelectedEntity(entityName);
@@ -95,11 +98,11 @@ function Force({ match }) {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const { data } = await axios({
+        const response = await axios({
           method: 'get',
           url: `data/${match.params.entity}Config.json`,
         });
-        setConfig(data);
+        setConfig(response.data);
         setIsLoading(false);
         setError('');
       } catch (err) {
@@ -114,14 +117,29 @@ function Force({ match }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios({
+        const { id } = queryString.parse(location.search);
+        const response = await axios({
           method: 'get',
           url: `data/${match.params.entity}.json`,
         });
-        setDatas(data);
+        /**
+         * Fake step. Normally I would call api a receceived an object and not an array
+         */
+        let filteredData = response.data;
+        if (id) {
+          if (Array.isArray(response.data)) {
+            filteredData = response.data.find(item => item.id === id);
+          } else {
+            filteredData = response.data;
+          }
+        }
+        /* ***** */
+
+        setData(filteredData);
+        setSelectedNode(filteredData);
         setError('');
       } catch (err) {
-        setDatas(null);
+        setData(null);
         setError(err.message);
       }
     };
@@ -132,11 +150,12 @@ function Force({ match }) {
 
   useEffect(() => {
     setShowBottomPanel(false);
-  }, [actionType, selectedNode]);
+  }, [actionType]);
 
   if (isLoading) return null;
   if (Object.keys(config.context).length === 0 && !isLoading)
     return <span>Impossible de charger la configuration</span>;
+
   return (
     <Root>
       {error && <span>{error}</span>}
@@ -147,7 +166,7 @@ function Force({ match }) {
         <Row>
           <Action
             selectItem={(item: Datas) =>
-              setDatas(prevDatas => ({
+              setData(prevDatas => ({
                 ...prevDatas,
                 children: [...prevDatas.children, item],
               }))
@@ -157,21 +176,26 @@ function Force({ match }) {
           <Navigation>
             <ForceDirectedChart
               retreiveSelectedNodeInformation={handleSelectedNodeInformation}
-              datas={datas}
+              data={data}
               config={config}
               setActionType={setActionType}
             />
           </Navigation>
         </Row>
         <Column>
-          <h2>{`Détail ${actionType === 'valorisation' ? actionType : ''}`}</h2>
-          {datas &&
-          (datas.children.length > 0 || datas.valorisations.length > 0) ? (
+          <h2>
+            {`Liste des ${
+              actionType === 'valorisation' ? `${actionType}s` : 'enfants'
+            } de ${selectedNode && selectedNode.name}`}
+          </h2>
+          {selectedNode &&
+          (selectedNode.children || selectedNode.valorisations) ? (
+            // eslint-disable-next-line react/jsx-indent
             <TileList
               lists={
                 actionType === 'valorisation'
-                  ? datas.valorisations
-                  : datas.children
+                  ? selectedNode.valorisations
+                  : selectedNode.children
               }
               handleClick={handleClick}
               selectedEntity={selectedEntity}
@@ -195,32 +219,28 @@ function Force({ match }) {
             prevSelectedNode={prevSelectedNode}
             setActionType={setActionType}
           />
-          {/* {actionType !== 'valorisation' ? (
-            <FormBuilder
-              item={selectedNode}
-              selectNode={handleSelectedSubItem}
-              prevSelectedNode={prevSelectedNode}
-              setActionType={setActionType}
-            />
-          ) : (
-            <Valorisation setActionType={setActionType} />
-          )} */}
         </RightPanel>
       )}
-      {showBottomPanel && (
+
+      {showBottomPanel && selectedNode && (
         <BottomPanel
           list={
             actionType === 'valorisation'
-              ? datas.valorisations.filter(list => {
+              ? selectedNode.valorisations &&
+                selectedNode.valorisations.filter(list => {
                   return list.entity === selectedEntity;
                 })
-              : datas.children.filter(list => {
+              : selectedNode.children &&
+                selectedNode.children.filter(list => {
                   return list.entity === selectedEntity;
                 })
           }
           selectNodeInformation={handleSelectedNodeInformation}
           closePanel={() => setShowBottomPanel(false)}
           setActionType={setActionType}
+          setTabs={setTabs}
+          entity={selectedNode.entity}
+          actionType={actionType}
         />
       )}
     </Root>

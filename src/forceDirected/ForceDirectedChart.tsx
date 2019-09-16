@@ -11,6 +11,7 @@ import {
 } from '@amcharts/amcharts4/plugins/forceDirected';
 import styled from '@emotion/styled';
 import ListIcon from '../assets/icons/list.svg';
+import NetworkIcon from '../assets/icons/network.svg';
 import ValorisationIcon from '../assets/icons/valorisation.svg';
 // eslint-disable-next-line import/no-unresolved
 import { ConfigState } from './forceDirected';
@@ -22,70 +23,84 @@ const Chart = styled.div`
 interface Props {
   retreiveSelectedNodeInformation: Function;
   setActionType: Function;
-  datas: any;
+  data: any;
   config: ConfigState;
 }
 const menuRefData = (containerHeight: number) => {
-  const iconSizeMiddle = 30 / 2;
+  const iconSize = 30;
+  const iconSizeMiddle = iconSize / 2;
+
   return [
     {
       actionType: 'valorisation',
       weight: 90,
       image: ValorisationIcon,
-      x: containerHeight / 2 - iconSizeMiddle,
-      y: -(containerHeight / 2 + iconSizeMiddle),
-      callbackKey: 'valorisation',
+      x: containerHeight / 2,
+      y: -containerHeight / 2,
     },
     {
-      actionType: 'list',
+      actionType: 'show_children',
       weight: 90,
       image: ListIcon,
-      x: containerHeight / 2 - iconSizeMiddle,
-      y: containerHeight / 2 - iconSizeMiddle,
-      callbackKey: 'toggle',
+      x: -iconSizeMiddle,
+      y: containerHeight / 2,
     },
     {
-      actionType: 'valorisation',
+      actionType: 'network',
       weight: 90,
-      image: ValorisationIcon,
-      x: -(containerHeight / 2 + iconSizeMiddle),
-      y: containerHeight / 2 - iconSizeMiddle,
-      callbackKey: 'valorisation',
-    },
-    {
-      actionType: 'list',
-      weight: 90,
-      image: ListIcon,
-      x: -(containerHeight / 2 + iconSizeMiddle),
-      y: -(containerHeight / 2 + iconSizeMiddle),
-      callbackKey: 'toggle',
+      image: NetworkIcon,
+      x: -containerHeight / 2 - iconSize,
+      y: -containerHeight / 2,
     },
   ];
+  // return [
+  //   {
+  //     actionType: 'valorisation',
+  //     weight: 90,
+  //     image: ValorisationIcon,
+  //     x: cosX,
+  //     y: sinY - iconSize,
+  //   },
+  //   {
+  //     actionType: 'show_children',
+  //     weight: 90,
+  //     image: ListIcon,
+  //     x: cosX - R + iconSizeMiddle / 2,
+  //     y: sinY + R + iconSizeMiddle,
+  //   },
+  //   {
+  //     actionType: 'network',
+  //     weight: 90,
+  //     image: NetworkIcon,
+  //     x: -cosX - iconSize,
+  //     y: sinY - iconSize,
+  //   },
+  // ];
 };
 
 function ForceDirectedChart({
   retreiveSelectedNodeInformation,
-  datas,
+  data,
   config,
   setActionType,
 }: Props) {
   const seriesRef = useRef<ForceDirectedSeries | null>(null);
   const selectedNodeRef = useRef<ForceDirectedNode | null>(null);
-  const selectedPieChart = useRef<any | null>(null);
+  const selectedMenu = useRef<any>(null);
 
-  const buildPieChart = container => {
+  const buildMenu = container => {
     const { height } = container.bbox;
     const points: am4core.IPoint = {
-      x: -(height + 150) / 2,
-      y: -(height + 150) / 2,
+      x: -(height + height + 45) / 2,
+      y: -(height + height + 45) / 2,
     };
     /**
      * Menu Configuration
      */
     const menuRef = container.createChild(am4chart.PieChart);
     menuRef.isMeasured = false;
-    menuRef.width = height + 150;
-    menuRef.height = height + 150;
+    menuRef.width = height + height + 45;
+    menuRef.height = height + height + 45;
     menuRef.moveTo(points);
     menuRef.isMeasured = false;
     menuRef.toBack();
@@ -123,18 +138,19 @@ function ForceDirectedChart({
      * Events Callback
      */
     menuSeries.slices.template.events.on('hit', ({ target }) => {
-      const pieChart: am4chart.PieChart = target.dataItem.component.chart;
+      const menu: am4chart.PieChart = target.dataItem.component.chart;
       const { actionType } = target.dataItem.dataContext;
-      if (actionType === 'list') {
+      if (actionType === 'show_children') {
         const activeNode = selectedNodeRef.current;
         if (activeNode) {
           activeNode.isActive = !activeNode.isActive;
         }
       }
+
       setActionType(actionType);
-      pieChart.hide(150);
+      menu.hide(150);
       setTimeout(() => {
-        pieChart.dispose();
+        menu.dispose();
       }, 170);
     });
     return menuRef;
@@ -144,7 +160,7 @@ function ForceDirectedChart({
     am4core.useTheme(am4themesAnimated);
     const chart = am4core.create('chartdiv', ForceDirectedTree);
     chart.padding(0, 0, 0, 0);
-
+    let timer;
     if (config && chart) {
       /**
        * ChartSeries Configuration
@@ -157,38 +173,43 @@ function ForceDirectedChart({
        * ChartSeries Events
        */
       seriesRef.current.nodes.template.events.on('hit', ({ target }) => {
-        const pieChart = target.children.values.find(
+        const menu = target.children.values.find(
           child => child instanceof am4chart.PieChart
         );
-        if (!pieChart) {
-          buildPieChart(target);
+        if (!menu) {
+          buildMenu(target);
         }
+        setActionType();
         selectedNodeRef.current = target;
-        setActionType('information');
         retreiveSelectedNodeInformation(target.dataItem.dataContext);
       });
 
       seriesRef.current.nodes.template.events.on('over', ({ target }) => {
-        const nodePieChart = target.children.values.find(
+        // Check if existingMenu
+        const existingMenu = target.children.values.find(
           child => child instanceof am4chart.PieChart
         );
-        if (!nodePieChart && selectedPieChart.current) {
-          selectedPieChart.current.dispose();
-          const newPieChart = buildPieChart(target);
-          selectedPieChart.current = newPieChart;
-        } else if (!nodePieChart) {
-          const newPieChart = buildPieChart(target);
-          selectedPieChart.current = newPieChart;
+        if (!existingMenu && selectedMenu.current) {
+          selectedMenu.current.dispose();
         }
-        selectedNodeRef.current = target;
+        timer = setTimeout(() => {
+          if (!existingMenu) {
+            const newMenu = buildMenu(target);
+            selectedMenu.current = newMenu;
+          }
+          selectedNodeRef.current = target;
+        }, 150);
       });
 
+      seriesRef.current.nodes.template.events.on('out', () =>
+        clearTimeout(timer)
+      );
       seriesRef.current.nodes.template.events.on('doublehit', ({ target }) => {
-        const pieChart = target.children.values.find(
+        const menu = target.children.values.find(
           child => child instanceof am4chart.PieChart
         );
-        if (pieChart) {
-          pieChart.dispose();
+        if (menu) {
+          menu.dispose();
         }
       });
     }
@@ -197,92 +218,21 @@ function ForceDirectedChart({
       if (chart) {
         chart.dispose();
       }
+      clearTimeout(timer);
     };
   }, [config]);
 
   useEffect(() => {
-    if (seriesRef.current && datas) {
-      let dataToArray = datas;
+    if (seriesRef.current && data) {
+      let dataToArray = data;
       if (!Array.isArray(dataToArray)) {
         dataToArray = [dataToArray];
       }
       seriesRef.current.data = dataToArray;
     }
-  }, [datas]);
+  }, [data]);
 
   return <Chart id="chartdiv" />;
 }
 
 export default ForceDirectedChart;
-
-// useEffect(() => {
-// const hasParent = (node: ForceDirectedSeriesDataItem) => !!node.parent;
-// const getParentId = (node?: ForceDirectedSeriesDataItem) =>
-//   node && node.parent && node.parent.cloneId;
-
-// const hasSameParent = (
-//   node1: ForceDirectedSeriesDataItem,
-//   node2: ForceDirectedSeriesDataItem
-// ) => getParentId(node1) === getParentId(node2);
-
-// const removeFollowingChildNode = (
-//   nodes: ForceDirectedNode[],
-//   nodeToRemove?: ForceDirectedNode
-// ) => {
-//   const existingCrumbIndex = nodes.findIndex(
-//     node =>
-//       nodeToRemove &&
-//       node.dataItem.cloneId === nodeToRemove.dataItem.cloneId
-//   );
-//   if (existingCrumbIndex !== -1) {
-//     return nodes.slice(0, existingCrumbIndex + 1);
-//   }
-//   return nodes;
-// };
-
-// const nodeWithSameLevel = (
-//   nodes: ForceDirectedNode[],
-//   parentId?: string
-// ) => {
-//   if (!nodes || !parentId) return null;
-//   const foundedNode = nodes.find(
-//     node => getParentId(node.dataItem) === parentId
-//   );
-//   if (foundedNode) return foundedNode;
-//   return null;
-// };
-
-// const handleSameLevel = (
-//   nodes: ForceDirectedNode[],
-//   actualNode: ForceDirectedNode
-// ) => {
-//   /**
-//     it doesn't work when 2nd generation are click
-//    */
-//   const alreadyExists = nodes.some(
-//     node =>
-//       actualNode && node.dataItem.cloneId === actualNode.dataItem.cloneId
-//   );
-//   if (alreadyExists) return removeFollowingChildNode(nodes, actualNode);
-
-//   const lastNode: ForceDirectedNode =
-//     nodes[nodes.length - 1] ||
-//     (actualNode &&
-//       nodeWithSameLevel(nodes, getParentId(actualNode.dataItem)));
-
-//   if (lastNode) {
-//     let tempNodes = removeFollowingChildNode(nodes, lastNode);
-//     if (
-//       actualNode &&
-//       hasParent(lastNode.dataItem) &&
-//       hasSameParent(actualNode.dataItem, lastNode.dataItem)
-//     ) {
-//       tempNodes = tempNodes.filter(
-//         prevNode => prevNode.cloneId !== lastNode.cloneId
-//       );
-//       return [...tempNodes, actualNode];
-//     }
-//   }
-//   return [...nodes, actualNode];
-// };
-// }, [selectedNodeRef]);

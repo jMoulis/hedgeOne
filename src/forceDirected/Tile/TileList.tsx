@@ -30,22 +30,22 @@ const TileList: FunctionComponent<Props> = ({
   const [groupedLists, setGroupList] = useState<object>({});
   useEffect(() => {
     const groupListItem = (entity: string, arrayItem: Datas[]) =>
-      arrayItem.reduce((acc, item) => {
-        const key = item[entity];
-        if (!acc[key]) {
-          acc[key] = [];
-        }
-        acc[key].push(item);
-        return acc;
-      }, {});
+      arrayItem
+        ? arrayItem.reduce((acc, item) => {
+            const key = item[entity];
+            if (!acc[key]) {
+              acc[key] = [];
+            }
+            acc[key].push(item);
+            return acc;
+          }, {})
+        : {};
 
-    if (lists) {
-      setGroupList(groupListItem('entity', lists));
-    }
+    setGroupList(groupListItem('entity', lists));
   }, [lists]);
 
   if (Object.keys(groupedLists).length === 0)
-    return <span>No item selected</span>;
+    return <span>Aucune sélection</span>;
   return (
     <Root>
       {Object.keys(groupedLists).map((key, index) => {

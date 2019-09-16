@@ -1,20 +1,9 @@
 {
   "context": {
-    "id": 1123,
-    "context": "serviceFolder",
-    "name": "Service Folder",
-    "actions": [
-      {
-        "displayedKey": "name",
-        "entity": "client",
-        "label": "Choisir un client"
-      },
-      {
-        "displayedKey": "name",
-        "entity": "montre",
-        "label": "Choisir une montre"
-      }
-    ]
+    "id": 1122,
+    "context": "client",
+    "name": "Client",
+    "actions": []
   },
   "series": {
     "type": "ForceDirectedSeries",
