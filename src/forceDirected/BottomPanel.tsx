@@ -136,7 +136,7 @@ const BottomPanel: FunctionComponent<Props> = ({
                       radius={2}
                       onClick={() => {
                         const HOST = 'https://jmoulis.github.io/hedgeOne';
-                        //const HOST = 'http://localhost:3000';
+                        // const HOST = 'http://localhost:3000';
                         const root = `${HOST}/${entity}`;
                         const searchQuery = entityItem.parent_id
                           ? `?id=${entityItem.parent_id}`
