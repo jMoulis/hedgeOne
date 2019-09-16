@@ -6,12 +6,12 @@
     "actions": [
       {
         "displayedKey": "name",
-        "entity": "clients",
+        "entity": "client",
         "label": "Choisir un client"
       },
       {
         "displayedKey": "name",
-        "entity": "montres",
+        "entity": "montre",
         "label": "Choisir une montre"
       }
     ]

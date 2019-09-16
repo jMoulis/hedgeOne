@@ -7,21 +7,24 @@
   "valorisations": [
     {
       "id": 3,
-      "entity": "Prix d'achat",
+      "name": "Prix d'achat",
+      "entity": "prix_achat",
       "date": "12/12/2009",
       "price": 12340,
       "quantity": 12
     },
     {
       "id": 5,
-      "entity": "Prix d'achat",
+      "name": "Prix d'achat",
+      "entity": "prix_achat",
       "date": "12/12/2012",
       "price": 230,
       "quantity": 10
     },
     {
       "id": 2,
-      "entity": "Prix d'achat",
+      "name": "Prix d'achat",
+      "entity": "prix_achat",
       "date": "12/12/2019",
       "price": 430,
       "quantity": 9
