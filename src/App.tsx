@@ -43,7 +43,7 @@ const App = ({ setTabsAction, setActiveTabAction }) => {
       try {
         const { data } = await Axios({
           method: 'get',
-          url: `/data/config.json`,
+          url: `data/config.json`,
         });
         setMenu(data.menu);
         setIsLoading(false);

@@ -100,7 +100,7 @@ function Force<Props>({ config, actions }) {
       try {
         const response = await axios({
           method: 'get',
-          url: `/data/${config.entity}Config.json`,
+          url: `data/${config.entity}Config.json`,
         });
         setSeries(response.data.series);
         setContext(response.data.context);
@@ -121,7 +121,7 @@ function Force<Props>({ config, actions }) {
       try {
         const response = await axios({
           method: 'get',
-          url: `/data/${config.entity}.json`,
+          url: `data/${config.entity}.json`,
         });
         /**
          * Fake step. Normally I would call api a receceived an object and not an array
