@@ -1,16 +1,14 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import axios from 'axios';
-import queryString from 'query-string';
 import ForceDirectedChart from './ForceDirectedChart';
 import Action from './Action';
 import RightPanel from './RightPanel';
 import TileList from './Tile/TileList';
 import BottomPanel from './BottomPanel';
 import FormBuilder from './FormBuilder';
-// eslint-disable-next-line import/no-unresolved
-import { ConfigState } from './forceDirected';
 
 const Root = styled.main`
   display: grid;
@@ -47,7 +45,12 @@ const Content = styled.div`
   grid-area: content;
 `;
 
-function Force({ match, location }) {
+interface Props {
+  config: any;
+  actions: any;
+}
+
+function Force<Props>({ config, actions }) {
   interface Datas {
     name: string;
     value: number;
@@ -58,10 +61,7 @@ function Force({ match, location }) {
     navigation: any;
     valorisations: any;
   }
-  const initConfigState = {
-    series: [],
-    context: {},
-  };
+
   const prevSelectedNode = useRef<Datas | null>(null);
   const [selectedNode, setSelectedNode] = useState<Datas | null>(null);
   const [actionType, setActionType] = useState<string>('');
@@ -71,8 +71,8 @@ function Force({ match, location }) {
   const [data, setData] = useState<any>(null);
   const [selectedEntity, setSelectedEntity] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [config, setConfig] = useState<ConfigState>(initConfigState);
-  const [tabs, setTabs] = useState([]);
+  const [context, setContext] = useState<any | null>(null);
+  const [series, setSeries] = useState<any[]>([]);
 
   const handleClick = (entityName: string) => {
     setSelectedEntity(entityName);
@@ -100,41 +100,41 @@ function Force({ match, location }) {
       try {
         const response = await axios({
           method: 'get',
-          url: `data/${match.params.entity}Config.json`,
+          url: `/data/${config.entity}Config.json`,
         });
-        setConfig(response.data);
+        setSeries(response.data.series);
+        setContext(response.data.context);
         setIsLoading(false);
         setError('');
       } catch (err) {
         setIsLoading(false);
-        setConfig(initConfigState);
+        setContext(null);
+        setSeries([]);
         setError(err.message);
       }
     };
     fetchData();
-  }, [match.params.entity]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { id } = queryString.parse(location.search);
         const response = await axios({
           method: 'get',
-          url: `data/${match.params.entity}.json`,
+          url: `/data/${config.entity}.json`,
         });
         /**
          * Fake step. Normally I would call api a receceived an object and not an array
          */
         let filteredData = response.data;
-        if (id) {
-          if (Array.isArray(response.data)) {
-            filteredData = response.data.find(item => item.id === id);
-          } else {
-            filteredData = response.data;
-          }
-        }
+        // if (id) {
+        //   if (Array.isArray(response.data)) {
+        //     filteredData = response.data.find(item => item.id === id);
+        //   } else {
+        //     filteredData = response.data;
+        //   }
+        // }
         /* ***** */
-
         setData(filteredData);
         setSelectedNode(filteredData);
         setError('');
@@ -143,24 +143,24 @@ function Force({ match, location }) {
         setError(err.message);
       }
     };
-    if (Object.keys(config.context).length !== 0) {
+    if (context && Object.keys(context).length !== 0) {
       fetchData();
     }
-  }, [config, match.params.entity]);
+  }, [context]);
 
   useEffect(() => {
     setShowBottomPanel(false);
   }, [actionType]);
 
   if (isLoading) return null;
-  if (Object.keys(config.context).length === 0 && !isLoading)
+  if (series.length === 0 && !isLoading)
     return <span>Impossible de charger la configuration</span>;
 
   return (
     <Root>
       {error && <span>{error}</span>}
       <Header>
-        <h1>{config.context.name}</h1>
+        <h1>{context && context.name}</h1>
       </Header>
       <Content>
         <Row>
@@ -171,13 +171,13 @@ function Force({ match, location }) {
                 children: [...prevDatas.children, item],
               }))
             }
-            config={config}
+            config={{ series, context }}
           />
           <Navigation>
             <ForceDirectedChart
               retreiveSelectedNodeInformation={handleSelectedNodeInformation}
               data={data}
-              config={config}
+              seriesConfig={series}
               setActionType={setActionType}
             />
           </Navigation>
@@ -238,9 +238,9 @@ function Force({ match, location }) {
           selectNodeInformation={handleSelectedNodeInformation}
           closePanel={() => setShowBottomPanel(false)}
           setActionType={setActionType}
-          setTabs={setTabs}
           entity={selectedNode.entity}
           actionType={actionType}
+          actions={actions}
         />
       )}
     </Root>

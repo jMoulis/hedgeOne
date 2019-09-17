@@ -5,7 +5,7 @@ import Modal from './Modal';
 import { Button } from './Templates';
 // eslint-disable-next-line import/no-unresolved
 import { ConfigState } from './forceDirected';
-import { TreePanel } from '../components/Tree';
+import { TreePanel } from '../Tree';
 
 const Root = styled.div``;
 

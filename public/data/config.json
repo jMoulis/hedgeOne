@@ -1,12 +1,16 @@
 {
-  "menus": [
+  "menu": [
     {
       "label": "ServiceFolder",
-      "link": "/serviceFolder"
+      "entity": "serviceFolder",
+      "type": "Document",
+      "tab": true
     },
     {
-      "label": "Entities",
-      "link": "/entities"
+      "label": "Client",
+      "entity": "client",
+      "type": "Document",
+      "tab": true
     }
   ]
 }

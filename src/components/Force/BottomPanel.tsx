@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { Button } from './Templates';
-import { ReactComponent as DollarIcon } from '../assets/icons/dollar.svg';
 
 const Root = styled.div`
   flex: 1;
@@ -52,10 +51,10 @@ interface Props {
   list: any[] | null;
   selectNodeInformation: Function;
   setActionType: Function;
-  setTabs: Function;
   closePanel: any;
   entity: string;
   actionType: string;
+  actions: any;
 }
 
 const BottomPanel: FunctionComponent<Props> = ({
@@ -63,10 +62,11 @@ const BottomPanel: FunctionComponent<Props> = ({
   selectNodeInformation,
   closePanel,
   setActionType,
-  setTabs,
   entity,
   actionType,
+  actions,
 }) => {
+  console.log(actions);
   const HOST = 'https://jmoulis.github.io/hedgeOne';
   // const HOST = 'http://localhost:3000';
   return (
@@ -94,15 +94,20 @@ const BottomPanel: FunctionComponent<Props> = ({
                     onClick={() => {
                       // setActionType(null);
                       // selectNodeInformation(entityItem);
+                      const fakeItem = {
+                        entity: 'serviceFolder',
+                        label: 'ServiceFolder',
+                        tab: true,
+                        tabId: '968fab40-d95b-11sdffe9-8707-8757dcaa404e',
+                        type: 'Document',
+                      };
+                      actions.setTabsAction(fakeItem);
+                      actions.setActiveTabAction(fakeItem);
                       const root = `${HOST}/${entity}`;
                       const searchQuery = entityItem.parent_id
                         ? `?id=${entityItem.parent_id}`
                         : '';
                       const url = `${root}${searchQuery}`;
-                      setTabs(prevTabs => [
-                        ...prevTabs,
-                        window.open(`${url}`, '_blank'),
-                      ]);
                     }}
                   >
                     <List>
@@ -113,22 +118,6 @@ const BottomPanel: FunctionComponent<Props> = ({
                     </List>
                   </Informations>
                   <Buttons>
-                    {/* {actionType !== 'valorisation' && (
-                      <Button
-                        onClick={() => {
-                          setActionType('valorisation');
-                          selectNodeInformation(entityItem);
-                        }}
-                        type="button"
-                        bgColor="blue"
-                        color="white"
-                        width={2}
-                        height={2}
-                        radius={2}
-                      >
-                        <DollarIcon width="15" height="15" />
-                      </Button>
-                    )} */}
                     <Button
                       type="button"
                       bgColor="green"
@@ -142,10 +131,6 @@ const BottomPanel: FunctionComponent<Props> = ({
                           ? `?id=${entityItem.parent_id}`
                           : '';
                         const url = `${root}${searchQuery}`;
-                        setTabs(prevTabs => [
-                          ...prevTabs,
-                          window.open(`${url}`, '_blank'),
-                        ]);
                       }}
                     />
                     <Button

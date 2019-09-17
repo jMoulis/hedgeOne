@@ -6,4 +6,7 @@ export interface ConfigState {
 export interface MenuProps {
   label: string;
   link: string;
+  path: string;
+  tab: boolean;
+  tabId: string;
 }

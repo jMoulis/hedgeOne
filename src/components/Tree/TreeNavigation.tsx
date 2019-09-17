@@ -1,6 +1,6 @@
 import React, { useEffect, useState, FunctionComponent } from 'react';
 import styled from '@emotion/styled';
-import { Li } from '../../forceDirected/Element';
+import { Li } from '../Force/Element';
 
 const Category = styled.h2``;
 

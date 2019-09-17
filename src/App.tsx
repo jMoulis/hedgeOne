@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import uuid from 'uuid/v1';
 import styled from '@emotion/styled';
 import Axios from 'axios';
-import Force from './forceDirected/Force';
-import LeftPanel from './forceDirected/LeftPanel';
-import Header from './forceDirected/Header';
+import { connect } from 'react-redux';
+import LeftPanel from 'components/LeftPanel';
+import Header from 'components/Header';
 // eslint-disable-next-line import/no-unresolved
-import { MenuProps } from './forceDirected/forceDirected';
+import { MenuProps } from 'components/Force/forceDirected';
+import { Tab } from 'components/Tab';
+import { setTabs, removeTab, setActiveTab } from 'store/reducers/tabReducer';
 
 const Root = styled.main`
   display: grid;
@@ -27,22 +29,23 @@ const Home = () => {
     </div>
   );
 };
+
 const Content = styled.div`
   grid-area: content;
 `;
-const App = () => {
+const App = ({ setTabsAction, setActiveTabAction }) => {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [menus, setMenus] = useState<MenuProps[] | null>(null);
+  const [menu, setMenu] = useState<MenuProps[]>([]);
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
         const { data } = await Axios({
           method: 'get',
-          url: `data/config.json`,
+          url: `/data/config.json`,
         });
-        setMenus(data.menus);
+        setMenu(data.menu);
         setIsLoading(false);
       } catch (err) {
         setIsLoading(false);
@@ -60,12 +63,16 @@ const App = () => {
         <span>Chargement en cours</span>
       ) : (
         <>
-          <LeftPanel menus={menus} />
+          <LeftPanel
+            menu={menu}
+            setSelectedMenu={item => {
+              const idedItem = { ...item, tabId: uuid() };
+              setActiveTabAction(idedItem);
+              setTabsAction(idedItem);
+            }}
+          />
           <Content>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route path="/:entity" component={Force} />
-            </Switch>
+            <Tab />
           </Content>
         </>
       )}
@@ -73,4 +80,22 @@ const App = () => {
   );
 };
 
-export default App;
+const mapStateToProps = ({ tabReducer }) => ({
+  tabs: tabReducer.tabs,
+});
+const mapDispatchToProps = dispatch => ({
+  setTabsAction: tab => {
+    dispatch(setTabs(tab));
+  },
+  removeTabAction: tab => {
+    dispatch(removeTab(tab));
+  },
+  setActiveTabAction: tab => {
+    dispatch(setActiveTab(tab));
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

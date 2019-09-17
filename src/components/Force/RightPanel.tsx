@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { Button } from './Templates';
-import { ReactComponent as ReturnIcon } from '../assets/icons/backIcon.svg';
+import { ReactComponent as ReturnIcon } from '../../assets/icons/backIcon.svg';
 
 const Root = styled.aside`
   grid-area: rightPanel;

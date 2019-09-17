@@ -1,7 +1,12 @@
-import { applyMiddleware, createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import forceReducer from './reducers/forceReducer';
+import tabReducer from 'store/reducers/tabReducer';
 
-const store = createStore(forceReducer);
+const rootReducer = combineReducers({
+  tabReducer,
+});
+const composedEnhancers = composeWithDevTools();
+
+const store = createStore(rootReducer, composedEnhancers);
 
 export default store;

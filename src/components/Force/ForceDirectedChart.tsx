@@ -10,11 +10,9 @@ import {
   ForceDirectedNode,
 } from '@amcharts/amcharts4/plugins/forceDirected';
 import styled from '@emotion/styled';
-import ListIcon from '../assets/icons/list.svg';
-import NetworkIcon from '../assets/icons/network.svg';
-import ValorisationIcon from '../assets/icons/valorisation.svg';
-// eslint-disable-next-line import/no-unresolved
-import { ConfigState } from './forceDirected';
+import ListIcon from '../../assets/icons/list.svg';
+import NetworkIcon from '../../assets/icons/network.svg';
+import ValorisationIcon from '../../assets/icons/valorisation.svg';
 
 const Chart = styled.div`
   height: 30rem;
@@ -24,7 +22,7 @@ interface Props {
   retreiveSelectedNodeInformation: Function;
   setActionType: Function;
   data: any;
-  config: ConfigState;
+  seriesConfig: any[];
 }
 const menuRefData = (containerHeight: number) => {
   const iconSize = 30;
@@ -53,35 +51,12 @@ const menuRefData = (containerHeight: number) => {
       y: -containerHeight / 2,
     },
   ];
-  // return [
-  //   {
-  //     actionType: 'valorisation',
-  //     weight: 90,
-  //     image: ValorisationIcon,
-  //     x: cosX,
-  //     y: sinY - iconSize,
-  //   },
-  //   {
-  //     actionType: 'show_children',
-  //     weight: 90,
-  //     image: ListIcon,
-  //     x: cosX - R + iconSizeMiddle / 2,
-  //     y: sinY + R + iconSizeMiddle,
-  //   },
-  //   {
-  //     actionType: 'network',
-  //     weight: 90,
-  //     image: NetworkIcon,
-  //     x: -cosX - iconSize,
-  //     y: sinY - iconSize,
-  //   },
-  // ];
 };
 
 function ForceDirectedChart({
   retreiveSelectedNodeInformation,
   data,
-  config,
+  seriesConfig,
   setActionType,
 }: Props) {
   const seriesRef = useRef<ForceDirectedSeries | null>(null);
@@ -161,13 +136,14 @@ function ForceDirectedChart({
     const chart = am4core.create('chartdiv', ForceDirectedTree);
     chart.padding(0, 0, 0, 0);
     let timer;
-    if (config && chart) {
+
+    if (chart) {
       /**
        * ChartSeries Configuration
        */
       seriesRef.current = new ForceDirectedSeries();
       chart.series.push(seriesRef.current);
-      seriesRef.current.config = config.series;
+      seriesRef.current.config = seriesConfig;
       seriesRef.current.nodes.template.togglable = false;
       /**
        * ChartSeries Events
@@ -220,7 +196,7 @@ function ForceDirectedChart({
       }
       clearTimeout(timer);
     };
-  }, [config]);
+  }, [seriesConfig]);
 
   useEffect(() => {
     if (seriesRef.current && data) {

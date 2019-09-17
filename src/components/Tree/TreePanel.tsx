@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import styled from '@emotion/styled';
 import TreeNavigation from './TreeNavigation';
-import { Ul, Li } from '../../forceDirected/Element';
+import { Ul, Li } from '../Force/Element';
 
 interface Props {
   close: Function;
