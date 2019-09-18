@@ -1,9 +1,15 @@
 {
   "context": {
-    "id": 1122,
+    "id": "1123422",
     "context": "montre",
     "name": "Montre",
-    "actions": []
+    "actions": [
+      {
+        "displayedKey": "name",
+        "entity": "client",
+        "label": "Choisir un client"
+      }
+    ]
   },
   "series": {
     "type": "ForceDirectedSeries",

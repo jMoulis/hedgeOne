@@ -1,9 +1,15 @@
 {
   "context": {
-    "id": 1122,
+    "id": "1122",
     "context": "client",
     "name": "Client",
-    "actions": []
+    "actions": [
+      {
+        "displayedKey": "name",
+        "entity": "client",
+        "label": "Choisir un gestionnaire de compte"
+      }
+    ]
   },
   "series": {
     "type": "ForceDirectedSeries",
