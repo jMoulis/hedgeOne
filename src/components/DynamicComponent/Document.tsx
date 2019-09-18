@@ -1,8 +1,8 @@
 import React from 'react';
-import { Force } from '../Force';
+import { Force } from 'components/Force';
 
-const Document = ({ config, actions, ...rest }) => {
-  return <Force {...rest} config={config} actions={actions} />;
+const Document = ({ ...rest }) => {
+  return <Force {...rest} />;
 };
 
 export default Document;

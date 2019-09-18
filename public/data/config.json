@@ -1,16 +1,12 @@
 {
   "menu": [
     {
-      "label": "ServiceFolder",
-      "entity": "serviceFolder",
-      "type": "Document",
-      "tab": true
+      "label": "Create Service Folder",
+      "entity": "serviceFolder"
     },
     {
-      "label": "Client",
-      "entity": "client",
-      "type": "Document",
-      "tab": true
+      "label": "List Client",
+      "entity": "client"
     }
   ]
 }

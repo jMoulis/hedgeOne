@@ -149,12 +149,6 @@ function ForceDirectedChart({
        * ChartSeries Events
        */
       seriesRef.current.nodes.template.events.on('hit', ({ target }) => {
-        const menu = target.children.values.find(
-          child => child instanceof am4chart.PieChart
-        );
-        if (!menu) {
-          buildMenu(target);
-        }
         setActionType();
         selectedNodeRef.current = target;
         retreiveSelectedNodeInformation(target.dataItem.dataContext);
@@ -173,13 +167,14 @@ function ForceDirectedChart({
             const newMenu = buildMenu(target);
             selectedMenu.current = newMenu;
           }
-          selectedNodeRef.current = target;
+          // selectedNodeRef.current = target;
         }, 150);
       });
 
       seriesRef.current.nodes.template.events.on('out', () =>
         clearTimeout(timer)
       );
+
       seriesRef.current.nodes.template.events.on('doublehit', ({ target }) => {
         const menu = target.children.values.find(
           child => child instanceof am4chart.PieChart

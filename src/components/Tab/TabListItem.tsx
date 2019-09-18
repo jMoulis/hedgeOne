@@ -2,9 +2,10 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg';
 import { connect } from 'react-redux';
-import { removeTab, setActiveTab } from 'store/reducers/tabReducer';
-import TabLabel from './TabLabel';
-import TabCloseButton from './TabCloseButton';
+import { deleteTab, setActiveTab } from 'store/reducers/tabReducer';
+import TabLabel from 'components/Tab/TabLabel';
+import TabCloseButton from 'components/Tab/TabCloseButton';
+import { deleteForceData } from 'store/reducers/forceReducer';
 
 interface RootType {
   isActive: boolean;
@@ -12,7 +13,6 @@ interface RootType {
 
 const Root = styled.li<RootType>`
   display: flex;
-  padding: 1rem;
   cursor: pointer;
   background-color: ${({ isActive }) => (isActive ? '#67B7DC' : 'lightGray')};
   color: ${({ isActive }) => (isActive ? 'white' : 'black')};
@@ -20,9 +20,11 @@ const Root = styled.li<RootType>`
 
 interface TabListItemType {
   activeTab: any;
-  setActiveTab: any;
+  setActiveTabAction: Function;
   tab: any;
-  handleRemoveTab: Function;
+  tabs: any;
+  deleteTabAction: Function;
+  deleteForceDataAction: Function;
 }
 
 const TabListItem = ({
@@ -30,20 +32,22 @@ const TabListItem = ({
   setActiveTabAction,
   tab,
   tabs,
-  removeTabAction,
+  deleteTabAction,
+  deleteForceDataAction,
 }) => {
-  const handleRemoveTab = tabId => {
+  const handleDeleteTab = tabId => {
     const deletedTabIndex = tabs.findIndex(prevTab => prevTab.tabId === tabId);
     const previousIndex = deletedTabIndex - 1;
     if (previousIndex >= 0) {
       setActiveTabAction(tabs[previousIndex]);
     }
-    removeTabAction(tabId);
+    deleteTabAction(tabId);
+    deleteForceDataAction(tabId);
   };
   return (
     <Root isActive={(activeTab && tab.tabId === activeTab.tabId) || false}>
       <TabLabel onClick={() => setActiveTabAction(tab)}>{tab.label}</TabLabel>
-      <TabCloseButton type="button" onClick={() => handleRemoveTab(tab.tabId)}>
+      <TabCloseButton type="button" onClick={() => handleDeleteTab(tab.tabId)}>
         <CloseIcon height="2rem" width="2rem" />
       </TabCloseButton>
     </Root>
@@ -55,11 +59,14 @@ const mapStateToProps = ({ tabReducer }) => ({
   activeTab: tabReducer.activeTab,
 });
 const mapDispatchToProps = dispatch => ({
-  removeTabAction: tab => {
-    dispatch(removeTab(tab));
+  deleteTabAction: tab => {
+    dispatch(deleteTab(tab));
   },
   setActiveTabAction: tab => {
     dispatch(setActiveTab(tab));
+  },
+  deleteForceDataAction: dataId => {
+    dispatch(deleteForceData(dataId));
   },
 });
 

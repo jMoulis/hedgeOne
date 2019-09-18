@@ -9,7 +9,7 @@ interface BarProps {
 
 export const Bar = styled.div<BarProps>`
   background-color: ${({ color }) => color || '#fff'};
-  height: ${({ height }) => height || 3}rem;
+  height: ${({ height }) => height}rem;
   width: ${({ width }) => (width ? `${width}rem` : '100%')};
   margin-bottom: ${({ marginBottom }) =>
     marginBottom ? `${marginBottom}rem` : '0.5rem'};
@@ -33,7 +33,7 @@ interface ButtonProps extends BarProps {
 }
 
 export const Button = styled(Bar)<ButtonProps>`
-  height: ${({ height }) => height || 3}rem;
+  height: ${({ height }) => height}rem;
   width: ${({ width }) => width || 7}rem;
   background-color: ${({ bgColor }) => bgColor || 'lightgreen'};
   color: ${({ color }) => color || 'inherit'};
@@ -45,4 +45,5 @@ export const Button = styled(Bar)<ButtonProps>`
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   border-radius: ${({ radius }) => radius}px;
+  padding: 1rem;
 `;

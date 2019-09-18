@@ -4,20 +4,21 @@ import axios from 'axios';
 import Modal from './Modal';
 import { Button } from './Templates';
 // eslint-disable-next-line import/no-unresolved
-import { ConfigState } from './forceDirected';
 import { TreePanel } from '../Tree';
 
 const Root = styled.div``;
 
 interface Props {
   selectItem: Function;
-  config: ConfigState;
+  entityActions: any[];
+  id: number;
 }
-const Action = ({ selectItem, config: { context } }: Props) => {
+const Action = ({ selectItem, entityActions, id }: Props) => {
   const [displayModal, setDisplayModal] = useState<boolean>(false);
   const [displayedKey, setDisplayedKey] = useState<string>('');
   const [entity, setEntity] = useState<string>('');
   const [data, setData] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,15 +35,14 @@ const Action = ({ selectItem, config: { context } }: Props) => {
       fetchData();
     }
   }, [entity]);
+
   const handleActions = action => {
     setDisplayedKey(action.displayedKey);
     setEntity(action.entity);
     setDisplayModal(true);
   };
-
-  if (!context) return null;
-  const { actions, id } = context;
-  if (actions.length === 0) return null;
+  if (!entityActions) return null;
+  if (entityActions.length === 0) return null;
   return (
     <Root>
       <h2>Actions</h2>
@@ -61,8 +61,8 @@ const Action = ({ selectItem, config: { context } }: Props) => {
         </Modal>
       )}
 
-      {actions &&
-        actions.map((action, index) => (
+      {entityActions &&
+        entityActions.map((action, index) => (
           <Button
             key={index}
             width={20}

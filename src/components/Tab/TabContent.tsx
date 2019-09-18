@@ -1,15 +1,17 @@
 import React, { Suspense } from 'react';
-import { ErrorBoundary } from '../ErrorBoundary';
+import { ErrorBoundary } from 'components/ErrorBoundary';
 
 interface PropsType {
   tab: any;
-  actions: any[];
 }
-function TabItem<PropsType>({ tab, actions }) {
-  const Component = React.lazy(() => import(`../DynamicComponent/${tab.type}`));
+
+function TabItem<PropsType>({ tab }) {
+  const Component = React.lazy(() =>
+    import(`components/DynamicComponent/Document`)
+  );
   return (
     <Suspense fallback={<span>Loading</span>}>
-      <Component config={tab} actions={actions} />
+      <Component />
     </Suspense>
   );
 }
@@ -18,10 +20,10 @@ interface TabButtonProps {
   componentName: string;
 }
 
-function TabContent<PropsType>({ tab, actions }) {
+function TabContent<PropsType>({ tab }) {
   return (
     <ErrorBoundary errorType="Unable to load the module">
-      <TabItem tab={tab} actions={actions} />
+      <TabItem tab={tab} />
     </ErrorBoundary>
   );
 }

@@ -18,7 +18,6 @@ const ListItem = styled.li`
   text-align: center;
   text-transform: capitalize;
   transition: all 150ms;
-  // cursor: pointer;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -49,25 +48,18 @@ const Informations = styled.div`
 // TODO: Change Any
 interface Props {
   list: any[] | null;
-  selectNodeInformation: Function;
-  setActionType: Function;
   closePanel: any;
   entity: string;
-  actionType: string;
   actions: any;
 }
 
 const BottomPanel: FunctionComponent<Props> = ({
   list,
-  selectNodeInformation,
   closePanel,
-  setActionType,
   entity,
-  actionType,
   actions,
 }) => {
-  console.log(actions);
-  const HOST = 'https://jmoulis.github.io/hedgeOne';
+  const HOST = process.env.REACT_APP_DOMAIN;
   // const HOST = 'http://localhost:3000';
   return (
     <Root>
@@ -94,20 +86,15 @@ const BottomPanel: FunctionComponent<Props> = ({
                     onClick={() => {
                       // setActionType(null);
                       // selectNodeInformation(entityItem);
-                      const fakeItem = {
-                        entity: 'serviceFolder',
-                        label: 'ServiceFolder',
-                        tab: true,
-                        tabId: '968fab40-d95b-11sdffe9-8707-8757dcaa404e',
-                        type: 'Document',
+                      // console.log(entityItem);
+                      const tab = {
+                        entity: entityItem.entity,
+                        label: entityItem.name,
+                        selectedItemId: entityItem.id,
                       };
-                      actions.setTabsAction(fakeItem);
-                      actions.setActiveTabAction(fakeItem);
-                      const root = `${HOST}/${entity}`;
-                      const searchQuery = entityItem.parent_id
-                        ? `?id=${entityItem.parent_id}`
-                        : '';
-                      const url = `${root}${searchQuery}`;
+                      if (actions) {
+                        actions.setTabsAction(tab);
+                      }
                     }}
                   >
                     <List>
