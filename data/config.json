@@ -1,12 +1,24 @@
 {
   "menu": [
     {
-      "label": "Create Service Folder",
-      "entity": "serviceFolder"
+      "label": "Factures",
+      "entity": "bills",
+      "type": "list"
     },
     {
-      "label": "List Client",
-      "entity": "client"
+      "label": "Clients",
+      "entity": "customers",
+      "type": "list"
+    },
+    {
+      "label": "Collaborateurs",
+      "entity": "employees",
+      "type": "list"
+    },
+    {
+      "label": "Projects",
+      "entity": "projects",
+      "type": "list"
     }
   ]
 }
