@@ -29,7 +29,7 @@ const TreeNavigation: FunctionComponent<Props> = ({
 
   const transformItems = listItems => {
     return listItems.reduce((acc, item) => {
-      const key = item.category;
+      const key = item.category.value;
       if (!acc[key]) {
         acc[key] = [];
       }
@@ -61,7 +61,7 @@ const TreeNavigation: FunctionComponent<Props> = ({
                 {subItems &&
                   subItems.map(subItem => (
                     <Li
-                      key={subItem.guid}
+                      key={subItem.id.value}
                       onClick={() => {
                         selectItem({
                           entity,
@@ -73,7 +73,7 @@ const TreeNavigation: FunctionComponent<Props> = ({
                         close();
                       }}
                     >
-                      {subItem.name}
+                      {subItem.name.value}
                     </Li>
                   ))}
               </ul>

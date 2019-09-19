@@ -73,15 +73,6 @@ const Action = ({ selectItem, entityActions, id }: Props) => {
             {action.label}
           </Button>
         ))}
-
-      {/* <Button
-        width={20}
-        onClick={() => {
-          handleActions({ displayedKey: 'name', entity: 'montres' });
-        }}
-      >
-        Choisir une montre
-      </Button> */}
     </Root>
   );
 };

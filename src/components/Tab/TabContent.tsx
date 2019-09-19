@@ -7,7 +7,11 @@ interface PropsType {
 
 function TabItem<PropsType>({ tab }) {
   const Component = React.lazy(() =>
-    import(`components/DynamicComponent/Document`)
+    import(
+      `components/DynamicComponent/${
+        tab.type === 'document' ? 'Document' : 'List'
+      }`
+    )
   );
   return (
     <Suspense fallback={<span>Loading</span>}>

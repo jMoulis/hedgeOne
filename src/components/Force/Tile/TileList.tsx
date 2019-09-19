@@ -29,10 +29,11 @@ const TileList: FunctionComponent<Props> = ({
 }) => {
   const [groupedLists, setGroupList] = useState<object>({});
   useEffect(() => {
-    const groupListItem = (entity: string, arrayItem: Datas[]) =>
-      arrayItem
+    const groupListItem = (entity: string, arrayItem: Datas[]) => {
+      // console.log(arrayItem);
+      return arrayItem
         ? arrayItem.reduce((acc, item) => {
-            const key = item[entity];
+            const key = item[entity].value;
             if (!acc[key]) {
               acc[key] = [];
             }
@@ -40,6 +41,7 @@ const TileList: FunctionComponent<Props> = ({
             return acc;
           }, {})
         : {};
+    };
 
     setGroupList(groupListItem('entity', lists));
   }, [lists]);

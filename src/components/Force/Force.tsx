@@ -14,8 +14,10 @@ import {
   setForceSelectedItem,
   setForceData,
   editForceData,
+  createForceData,
 } from 'store/reducers/forceReducer';
 import { setActiveTab, setTabs } from 'store/reducers/tabReducer';
+import { createNewItem } from 'store/fakeNewItems';
 
 const Root = styled.main`
   display: grid;
@@ -61,6 +63,7 @@ interface Datas {
   id: string;
   navigation: any;
   valorisations: any;
+  baseData: any;
 }
 
 interface Props {
@@ -77,9 +80,10 @@ function Force<Props>({
   setForceDataAction,
   activeTab,
   editForceDataAction,
+  createForceDataAction,
 }) {
   const prevSelectedNode = useRef<Datas | null>(null);
-  const [selectedNode, setSelectedNode] = useState<Datas | null>(null);
+  const [selectedNode, setSelectedNode] = useState<any | null>(null);
   const [actionType, setActionType] = useState<string>('');
   const [showRightPanel, setShowRightPanel] = useState<boolean>(false);
   const [showBottomPanel, setShowBottomPanel] = useState<boolean>(false);
@@ -89,6 +93,7 @@ function Force<Props>({
   const [context, setContext] = useState<any | null>(null);
   const [entityActions, setEntityActions] = useState([]);
   const [series, setSeries] = useState<any[]>([]);
+  const [isMenuClick, setIsMenuClick] = useState<boolean>(false);
 
   const handleClick = (entityName: string) => {
     setSelectedEntity(entityName);
@@ -97,8 +102,10 @@ function Force<Props>({
 
   const handleSelectedNodeInformation = (response: Datas) => {
     prevSelectedNode.current = null;
-    setSelectedNode(response);
+    setSelectedNode(response.baseData);
+    // console.log(forceData[response.id]);
     setShowRightPanel(true);
+    // setIsMenuClick(false);
   };
 
   const handleSelectedSubItem = (response: Datas) => {
@@ -145,15 +152,15 @@ function Force<Props>({
         /**
          * Fake step. Normally I would call api a receceived an object and not an array
          */
-        let filteredData = response.data;
-        if (activeTab && activeTab.selectedItemId) {
-          if (Array.isArray(response.data)) {
+        let filteredData;
+        if (Array.isArray(response.data)) {
+          if (activeTab && activeTab.selectedItemId) {
             filteredData = response.data.find(
-              item => item.id === activeTab.selectedItemId
+              item => item.id.value === activeTab.selectedItemId
             );
-          } else {
-            filteredData = response.data;
           }
+        } else {
+          filteredData = response.data;
         }
         if (!filteredData) {
           throw Error('Item not found');
@@ -173,18 +180,26 @@ function Force<Props>({
         setError(err.message);
       }
     };
-    if (context && Object.keys(context).length !== 0) {
+
+    if (!activeTab.isCreation && context && Object.keys(context).length !== 0) {
       fetchData();
+    }
+    if (activeTab.isCreation) {
+      // Add new entry in
+      if (!forceData || (forceData && !forceData[activeTab.tabId])) {
+        const newItem = createNewItem(activeTab.entity);
+        createForceDataAction({ [activeTab.tabId]: newItem });
+      }
     }
   }, [context, activeTab]);
 
   useEffect(() => {
-    if (selectedNode && selectedNode.entity) {
+    if (selectedNode && selectedNode.entity.value) {
       const fetchData = async () => {
         try {
           const response = await axios({
             method: 'get',
-            url: `data/${selectedNode.entity}Config.json`,
+            url: `data/${selectedNode.entity.value}Config.json`,
           });
           setEntityActions(response.data.context.actions);
           setError('');
@@ -218,7 +233,13 @@ function Force<Props>({
                 editForceDataAction({
                   [activeTab.tabId]: {
                     ...forceData[activeTab.tabId],
-                    children: [...forceData[activeTab.tabId].children, item],
+                    children: {
+                      ...forceData[activeTab.tabId].children,
+                      value: [
+                        ...forceData[activeTab.tabId].children.value,
+                        item,
+                      ],
+                    },
                   },
                 })
               );
@@ -232,6 +253,7 @@ function Force<Props>({
               data={forceData ? forceData[activeTab.tabId] : null}
               seriesConfig={series}
               setActionType={setActionType}
+              setIsMenuClick={setIsMenuClick}
             />
           </Navigation>
         </Row>
@@ -239,16 +261,18 @@ function Force<Props>({
           <h2>
             {`Liste des ${
               actionType === 'valorisation' ? `${actionType}s` : 'enfants'
-            } de ${selectedNode && selectedNode.name}`}
+            } de ${selectedNode &&
+              selectedNode.name &&
+              selectedNode.name.value}`}
           </h2>
           {selectedNode &&
-          (selectedNode.children || selectedNode.valorisations) ? (
+          (selectedNode.children.value || selectedNode.valorisations.value) ? (
             // eslint-disable-next-line react/jsx-indent
             <TileList
               lists={
                 actionType === 'valorisation'
-                  ? selectedNode.valorisations
-                  : selectedNode.children
+                  ? selectedNode.valorisations.value
+                  : selectedNode.children.value
               }
               handleClick={handleClick}
               selectedEntity={selectedEntity}
@@ -262,7 +286,11 @@ function Force<Props>({
       {showRightPanel && (
         <RightPanel
           closePanel={() => setShowRightPanel(false)}
-          title={selectedNode ? selectedNode.name : 'Détail'}
+          title={
+            selectedNode && selectedNode.name
+              ? selectedNode.name.value
+              : 'Détail'
+          }
           selectNode={handleSelectedSubItem}
           prevSelectedNode={prevSelectedNode}
         >
@@ -281,15 +309,14 @@ function Force<Props>({
             actionType === 'valorisation'
               ? selectedNode.valorisations &&
                 selectedNode.valorisations.filter(list => {
-                  return list.entity === selectedEntity;
+                  return list.entity.value === selectedEntity;
                 })
               : selectedNode.children &&
-                selectedNode.children.filter(list => {
-                  return list.entity === selectedEntity;
+                selectedNode.children.value.filter(list => {
+                  return list.entity.value === selectedEntity;
                 })
           }
           closePanel={() => setShowBottomPanel(false)}
-          entity={selectedNode.entity}
           actions={actions}
         />
       )}
@@ -309,6 +336,9 @@ const mapDispatchToProps = dispatch => ({
   },
   editForceDataAction: data => {
     dispatch(editForceData(data));
+  },
+  createForceDataAction: data => {
+    dispatch(createForceData(data));
   },
   actions: {
     setActiveTabAction: tab => {

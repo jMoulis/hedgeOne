@@ -23,6 +23,7 @@ interface Props {
   setActionType: Function;
   data: any;
   seriesConfig: any[];
+  setIsMenuClick: Function;
 }
 const menuRefData = (containerHeight: number) => {
   const iconSize = 30;
@@ -58,6 +59,7 @@ function ForceDirectedChart({
   data,
   seriesConfig,
   setActionType,
+  setIsMenuClick,
 }: Props) {
   const seriesRef = useRef<ForceDirectedSeries | null>(null);
   const selectedNodeRef = useRef<ForceDirectedNode | null>(null);
@@ -113,6 +115,7 @@ function ForceDirectedChart({
      * Events Callback
      */
     menuSeries.slices.template.events.on('hit', ({ target }) => {
+      setIsMenuClick(true);
       const menu: am4chart.PieChart = target.dataItem.component.chart;
       const { actionType } = target.dataItem.dataContext;
       if (actionType === 'show_children') {
@@ -150,6 +153,7 @@ function ForceDirectedChart({
        */
       seriesRef.current.nodes.template.events.on('hit', ({ target }) => {
         setActionType();
+        setIsMenuClick(false);
         selectedNodeRef.current = target;
         retreiveSelectedNodeInformation(target.dataItem.dataContext);
       });
@@ -195,11 +199,33 @@ function ForceDirectedChart({
 
   useEffect(() => {
     if (seriesRef.current && data) {
-      let dataToArray = data;
-      if (!Array.isArray(dataToArray)) {
-        dataToArray = [dataToArray];
+      const flatObject: any = serieData => {
+        return Object.entries(serieData).reduce(
+          (acc, entry) => {
+            const key: string = entry[0];
+            const value: any = entry[1];
+            if (
+              value.value &&
+              Array.isArray(value.value) &&
+              value.value.length > 0
+            ) {
+              const arrayItems = value.value;
+              const flatenedArrayItem = arrayItems.map(arrayItem =>
+                flatObject(arrayItem)
+              );
+              return { ...acc, [key]: flatenedArrayItem };
+            }
+            return { ...acc, [key]: value.value };
+          },
+          { baseData: serieData }
+        );
+      };
+      let flatenedData = flatObject(data);
+      if (!Array.isArray(flatenedData)) {
+        flatenedData = [flatenedData];
       }
-      seriesRef.current.data = dataToArray;
+
+      seriesRef.current.data = [...flatenedData];
     }
   }, [data]);
 

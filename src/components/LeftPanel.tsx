@@ -9,6 +9,19 @@ const Root = styled.aside`
   background-color: lavender;
 `;
 
+const Button = styled.button`
+  border: none;
+  background-color: transparent;
+  font-size: 1.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  &:hover {
+    background-color: lightGray;
+  }
+`;
+
 interface Props {
   menu: MenuProps[];
   setSelectedMenu: Function;
@@ -21,15 +34,12 @@ const LeftPanel = ({ menu, setSelectedMenu }) => {
         {menu.map((menuItem: MenuProps) => {
           return (
             <li key={menuItem.label}>
-              <div onClick={() => setSelectedMenu(menuItem)}>
+              <Button onClick={() => setSelectedMenu(menuItem)}>
                 {menuItem.label}
-              </div>
+              </Button>
             </li>
           );
         })}
-        <li>
-          <Link to="/tab">Tab</Link>
-        </li>
       </ul>
     </Root>
   );

@@ -32,6 +32,7 @@ const Home = () => {
 const Content = styled.div`
   grid-area: content;
 `;
+
 const App = ({ setTabsAction }) => {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);

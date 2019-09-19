@@ -49,18 +49,14 @@ const Informations = styled.div`
 interface Props {
   list: any[] | null;
   closePanel: any;
-  entity: string;
   actions: any;
 }
 
 const BottomPanel: FunctionComponent<Props> = ({
   list,
   closePanel,
-  entity,
   actions,
 }) => {
-  const HOST = process.env.REACT_APP_DOMAIN;
-  // const HOST = 'http://localhost:3000';
   return (
     <Root>
       <Header>
@@ -79,28 +75,19 @@ const BottomPanel: FunctionComponent<Props> = ({
         {list && (
           <ul>
             {list.map(entityItem => {
+              console.log(entityItem);
               if (Object.keys(entityItem).length === 0) return null;
               return (
-                <ListItem key={entityItem.id}>
-                  <Informations
-                    onClick={() => {
-                      // setActionType(null);
-                      // selectNodeInformation(entityItem);
-                      // console.log(entityItem);
-                      const tab = {
-                        entity: entityItem.entity,
-                        label: entityItem.name,
-                        selectedItemId: entityItem.id,
-                      };
-                      if (actions) {
-                        actions.setTabsAction(tab);
-                      }
-                    }}
-                  >
+                <ListItem key={entityItem.id.value}>
+                  <Informations>
                     <List>
                       {Object.keys(entityItem).map(key => {
-                        if (typeof entityItem[key] !== 'string') return null;
-                        return <ListItem key={key}>{entityItem[key]}</ListItem>;
+                        if (!entityItem[key].displayList) return null;
+                        if (typeof entityItem[key].value !== 'string')
+                          return null;
+                        return (
+                          <ListItem key={key}>{entityItem[key].value}</ListItem>
+                        );
                       })}
                     </List>
                   </Informations>
@@ -113,11 +100,15 @@ const BottomPanel: FunctionComponent<Props> = ({
                       height={2}
                       radius={2}
                       onClick={() => {
-                        const root = `${HOST}/${entity}`;
-                        const searchQuery = entityItem.parent_id
-                          ? `?id=${entityItem.parent_id}`
-                          : '';
-                        const url = `${root}${searchQuery}`;
+                        const tab = {
+                          entity: entityItem.entity.value,
+                          label: entityItem.name.value,
+                          selectedItemId: entityItem.id.value,
+                          type: 'document',
+                        };
+                        if (actions) {
+                          actions.setTabsAction(tab);
+                        }
                       }}
                     />
                     <Button

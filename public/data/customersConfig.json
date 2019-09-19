@@ -1,12 +1,12 @@
 {
   "context": {
-    "id": "1122",
-    "context": "client",
+    "id": "11et22",
+    "context": "customers",
     "name": "Client",
     "actions": [
       {
         "displayedKey": "name",
-        "entity": "client",
+        "entity": "employees",
         "label": "Choisir un gestionnaire de compte"
       }
     ]
@@ -35,7 +35,7 @@
     "manyBodyStrength": -50,
     "centerStrength": 1,
     "fontSize": 12,
-    "minRadius": 20,
-    "maxRadius": 60
+    "minRadius": 50,
+    "maxRadius": 50
   }
 }

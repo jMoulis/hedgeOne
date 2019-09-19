@@ -55,7 +55,7 @@ const TreePanel: FunctionComponent<Props> = ({
                   close();
                 }}
               >
-                {item[displayedKey]}
+                {item[displayedKey].value}
               </Li>
             );
           }

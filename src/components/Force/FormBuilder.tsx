@@ -41,24 +41,25 @@ const FormBuilder: React.FC<Props> = ({ item, selectNode, setActionType }) => {
           <Label>{`${label}:`}</Label>
           {label === 'children' && (
             <ul>
-              {value.map((child, idx) => (
+              {value.value.map((child, idx) => (
                 <ListItem key={idx} onClick={() => selectNode(child)}>
-                  {child.name}
+                  {child.name.value}
                 </ListItem>
               ))}
             </ul>
           )}
           {label === 'valorisations' && (
             <>
-              {value.length > 0 ? (
+              {value.value.length > 0 ? (
                 <ValorisationLink onClick={() => setActionType('valorisation')}>
                   Consulter
                 </ValorisationLink>
               ) : null}
             </>
           )}
-          {typeof value === 'string' || typeof value === 'number' ? (
-            <span>{value}</span>
+          {typeof value.value === 'string' ||
+          typeof value.value === 'number' ? (
+            <span>{value.value}</span>
           ) : null}
         </div>
       );
