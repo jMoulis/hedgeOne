@@ -20,7 +20,9 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "no-underscore-dangle": "off",
-    "react/no-array-index-key": "off"
+    "react/no-array-index-key": "off",
+    "react/jsx-filename-extension": "off",
+    "import/prefer-default-export": "off"
   },
   "settings": {
     "import/resolver": {

@@ -1,12 +1,9 @@
 import { createStore, combineReducers } from 'redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { composeWithDevTools } from 'redux-devtools-extension';
-import tabReducer from 'store/reducers/tabReducer';
-import forceReducer from 'store/reducers/forceReducer';
+import taskReducer from 'store/reducers/taskReducer';
 
 const rootReducer = combineReducers({
-  tabReducer,
-  forceReducer,
+  taskReducer,
 });
 const composedEnhancers = composeWithDevTools();
 
